@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Document</title>
+</head>
+<body>
+    <h1>회원가입하기</h1>
+    <hr>
+<!-- //  connection.query("INSERT INTO User (Name, NickName,LibraryName,Sns,) VALUES (?, ?)", [ -->
+    <form action="/addUser" method="POST">
+        <table>
+            <tr>
+                <td><input type="text" name="name" placeholder="name"></td>
+            </tr>
+            <tr>
+                <td><input type="text" name="nickname" placeholder="NickName"></td>
+            </tr>
+            <tr>
+                <td><input type="text" name="libraryname" placeholder="서재명"></td>
+            </tr>
+            <tr>
+                <td>
+                    <p>sns</p>
+                    <input type="radio" name="sns" value="Naver"> Naver<br>
+                    <input type="radio" name="sns" value="Kakao"> Kakao<br>
+                    <input type="radio" name="sns" value="Facebook"> Facebook<br>  
+                </td>
+            </tr>
+        </table>
+        <input type="submit" value="회원가입하기">
+    </form>
+</body>
+</html>

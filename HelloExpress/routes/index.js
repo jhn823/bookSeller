@@ -8,27 +8,28 @@ var connection = mysql.createConnection({
   database: "class"
 });
 
+var obj = {};
+var userID = 1;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  // res.render('index',{title : 'hello'})
- 
   connection.query("SELECT * FROM book;", function(err, result, fields){
+    
     if(err){
-      console.log("쿼리문에 오류가 있습니다.");
-      console.log(err);
-    }
-    else{
-      res.json(result);
-    }
+      throw err;
+  } else {
+    console.log("UID : " + userID);
+      obj = 
+      {print: result,
+       UID : userID};
+      res.render('index', obj);                
+  }
   });
-
 });
-
+/*Get create page*/
 router.get('/create', function(req, res, next) {
   res.render('create');
 });
-
 
 router.post('/create', function(req, res, next) {
   var body = req.body;
@@ -40,5 +41,34 @@ router.post('/create', function(req, res, next) {
     res.redirect("/");
   });
 });
+
+/*Add to db*/
+
+router.get('/addUser', function(req, res, next) {
+  res.render('addUser');
+});
+
+
+router.post('/addUser', function(req, res, next) {
+  var body = req.body;
+  connection.query("INSERT INTO User (Name, NickName,LibraryName,Sns) VALUES (?, ?, ?, ?)", [
+      body.name, body.nickname, body.libraryname, body.sns
+  ]);
+  connection.query("SELECT User_index FROM User WHERE " + "'" + body.nickname + "'"+"= NickName",
+  function(err, result, fields){
+    if(err){
+      console.log("쿼리문에 오류가 있습니다.");
+      console.log(err);
+    }
+    else{
+      console.log(result[0].User_index);
+      userID = result[0].User_index;
+      console.log(userID);
+      res.redirect("/");
+    }
+   });
+});
+
+
 
 module.exports = router;
