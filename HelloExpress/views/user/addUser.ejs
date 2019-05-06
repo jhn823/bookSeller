@@ -9,16 +9,16 @@
     <h1>회원가입하기</h1>
     <hr>
 <!-- //  connection.query("INSERT INTO User (Name, NickName,LibraryName,Sns,) VALUES (?, ?)", [ -->
-    <form action="/addUser" method="POST">
+    <form action="/user/addUser" method="POST">
         <table>
             <tr>
+                <td><input type="text" name="email" placeholder="email"></td>
+            </tr>
+            <tr>
+                <td><input type="text" name="password" placeholder="password"></td>
+            </tr>
+            <tr>
                 <td><input type="text" name="name" placeholder="name"></td>
-            </tr>
-            <tr>
-                <td><input type="text" name="nickname" placeholder="NickName"></td>
-            </tr>
-            <tr>
-                <td><input type="text" name="libraryname" placeholder="서재명"></td>
             </tr>
             <tr>
                 <td>

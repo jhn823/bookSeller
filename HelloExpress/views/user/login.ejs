@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>밀리의 서재</title>
+</head>
+<body>
+    <h1>LOGIN</h1>
+    <hr />
+    <!-- login -->
+    <form action="/user/login" method="POST">
+        <table>
+            <tr>
+                <td><input type="text" name="email" placeholder="이메일 주소를 입력하세요."></td>
+            </tr>
+            <tr>
+                <td><input type="text" name="password" placeholder="패스워드를 입력하세요."></td>
+            </tr>
+        </table>
+        <input type="submit" value="전송하기">
+    </form>
+    <button><a href = "http://localhost:3000/user/addUser">회원 가입</a></button>
+</body>
+</html>
