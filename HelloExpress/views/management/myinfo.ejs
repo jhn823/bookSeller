@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Document</title>
+</head>
+<body>
+    <h1>계정 및 구독관리</h1>
+    <hr>
+    <table>
+            <tr>
+                <td><a href="http://localhost:3000/management/myinfo/set_writer">필명</a></td>
+                <td><%=  user[0].NickName %></td>
+            </tr>
+            <tr>
+                <td><a href="http://localhost:3000/management/myinfo/set_shelf">서재명</a></td>
+                <td><%=  user[0].LibraryName %></td>
+            </tr>
+            <tr>
+                <td><a href="http://localhost:3000/management/myinfo/set_description">서재소개</a></td>
+                <td><%= user[0].LibraryDescription %></td>
+
+            </tr>
+            <tr>
+                <td><a href="http://localhost:3000/management/myinfo/set_open">공개여부</a></td>
+                <% if(user[0].LibraryVisibility == 1){%>
+                    <td>공개</td>
+                <% }else{%>
+                    <td>비공개</td>
+                <% } %>
+            </tr>
+            <tr>
+                <td>휴대전화번호</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>이메일</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+            </tr>
+        </table>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Document</title>
+</head>
+<body>
+    <h1>서재공개 수정</h1>
+    <hr>
+    <form action="/management/myinfo/set_open" method="POST">
+        <table>
+            <tr>
+                <input type="radio" name="open" value="1"> 공개<br>
+                <input type="radio" name="open" value="0"> 비공개<br>
+            </tr>
+        </table>
+        <input type="submit" value="확인">
+    </form>
+</body>
+</html>

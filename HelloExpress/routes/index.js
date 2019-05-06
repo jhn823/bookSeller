@@ -9,7 +9,7 @@ var connection = mysql.createConnection({
 });
 
 var obj = {};
-var userID = 1;
+var userID = -1;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -91,6 +91,7 @@ router.post('/user/addUser', function(req, res, next) {
 
 /*관리페이지*/
 router.get('/management/list', function(req, res, next) {
+  if(userID==-1) res.render('user/login');
   res.render('management/list');
 });
 
@@ -125,6 +126,80 @@ router.post('/create', function(req, res, next) {
       
     res.redirect("/");
   });
+});
+
+/*관리->계정관리*/
+router.get('/management/myinfo', function(req, res, next) {
+  sql = "SELECT * FROM User WHERE " + "'" + userID + "' = User_index";
+  connection.query(sql,function(err, result, fields){
+    if (err) throw err;
+    else{
+      var string=JSON.stringify(result);
+      var info =  JSON.parse(string);
+      obj = {user : info}
+      console.log(obj);
+      res.render('management/myinfo', obj);  
+    }
+      
+  });
+});
+
+/*관리->계정관리->필명 수정*/
+router.get('/management/myinfo/set_writer', function(req, res, next) {
+  res.render('management/myinfo/set_writer');
+});
+router.post('/management/myinfo/set_writer', function(req, res, next) {
+  var body = req.body;
+  sql = "UPDATE User SET NickName = '"+ body.name +"' WHERE User_index = " + String(userID) ;
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect("/management/myinfo");
+});
+
+
+/*관리->계정관리->서재명 수정*/
+router.get('/management/myinfo/set_shelf', function(req, res, next) {
+  res.render('management/myinfo/set_shelf');
+});
+router.post('/management/myinfo/set_shelf', function(req, res, next) {
+  var body = req.body;
+  sql = "UPDATE User SET NickName = '"+ body.name +"' WHERE User_index = " + String(userID) ;
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect("/management/myinfo");
+});
+
+/*관리->계정관리->서재설명 수정*/
+router.get('/management/myinfo/set_description', function(req, res, next) {
+  res.render('management/myinfo/set_description');
+});
+router.post('/management/myinfo/set_description', function(req, res, next) {
+  var body = req.body;
+  sql = "UPDATE User SET LibraryDescription = '"+ body.description +"' WHERE User_index = " + String(userID) ;
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect("/management/myinfo");
+});
+
+/*관리->계정관리->서재 공개설정 수정*/
+router.get('/management/myinfo/set_open', function(req, res, next) {
+  res.render('management/myinfo/set_open');
+});
+
+router.post('/management/myinfo/set_open', function(req, res, next) {
+  var body = req.body;
+  sql = "UPDATE User SET LibraryVisibility = '"+ body.open +"' WHERE User_index = " + String(userID) ;
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect("/management/myinfo");
 });
 
 
