@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
 });
 
 var obj = {};
-var userID = 1;
+var userID = 1;;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
