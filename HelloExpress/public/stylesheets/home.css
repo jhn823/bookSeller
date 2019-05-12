@@ -1,0 +1,53 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.main_menu {
+  margin : 10px;
+}
+
+#menu{
+  display : inline;
+  margin : 20px;
+}
+
+a{
+  color : black;
+  text-decoration : none;
+}
+
+.column{
+  width :40%;
+  overflow : scroll;
+  background-color : whitesmoke;
+  margin-bottom : 3%;
+  white-space:nowrap;
+
+}
+
+.list {
+  display : inline-block;
+  margin : 2%;
+  padding: 10px;
+  border : 1px solid black;
+  font-weight : bold;
+  width : 80px;
+}
+.tag {
+  display : inline-block;
+  margin : 2%;
+  font-weight : bold;
+}
+table { 
+  width : 35%;
+}
+tr{
+  margin : 10px;
+  text-align: center;
+}
+th{
+  font-size : 20px;
+}
+
+

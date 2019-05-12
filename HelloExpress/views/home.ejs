@@ -2,14 +2,190 @@
 <html lang="kr">
 <head>
     <meta charset="UTF-8">
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/home.css' />
     <title>밀리의 서재</title>
 </head>
-<body>
-    <h1>HOME</h1>
+<body> 
+    <div class = "main_menu">
+        <center>
+            <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
+            </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
+            </h2> <h2 id ="menu"><a href ="#">내 서재</a></h2>
+            <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
+        </center>
+    </div>
+    
     <hr />
-    <button><a href = "http://localhost:3000/user/login">로그인하기</a></button>
+    <div>
+        <center>
+            <h2>오늘의 책</h2>
+            <div class ="column">
+                <div class = "list">
+                    <p>한강</p>
+                    <p>소년이 온다</p>
+                </div>
+            </div>
+
+
+        <h2>오늘의 리딩북</h2>
+    
+        <div class ="column">
+            <div class = "list">
+                <p>한강</p>
+                <p>소년이 온다</p>
+            </div>
+        </div>
+        
+
+        <h2>실시간 인용문</h2>
+        <div class ="column">
+            
+        </div>
+        <h2>밀리 작가 특집</h2>
+        <div class ="column">
+        <div class = "list">
+            <p>한강</p>
+        </div>
+        </div>
+        <h2>밀리 서평/독서 능력자들</h2>
+        <div class ="column">
+                <table>
+                    <tr>
+                        <th>서평 능력자</th>
+                        <th>서평</th>
+                        <th>읽은책</th>
+                    </tr>
+                    <tr>
+                        <td>성공한 여행가_27</td>
+                        <td>5</td>
+                        <td>7</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th>독서능력자</th>
+                        <th>서평</th>
+                        <th>읽은책</th>
+                    </tr>
+                    <tr>
+                        <td>성공한 여행가_27</td>
+                        <td>5</td>
+                        <td>7</td>
+                    </tr>
+                </table>
+        </div>
+        <h2>북차트</h2>
+        <div class ="column">
+        <table>
+                <tr>
+                    <th>유져</th>
+                    <th>서평</th>
+                    <th>읽은책</th>
+                </tr>
+                <tr>
+                    <td>성공한 여행가_27</td>
+                    <td>5</td>
+                    <td>7</td>
+                </tr>
+            </table>
+                    
+        </div>
+        <h2>밀리 오리지널</h2>
+        <div class ="column">
+            <div class = "list">
+                <p>한강</p>
+                <p>소년이 온다</p>
+            </div>
+        </div>
+        <h2>감성 태그 픽</h2>
+        <div class ="column">
+            <div class = "tag">
+                <p>#밤에읽기좋은</p>
+            </div>
+        </div>
+        <h2>이벤트 목록</h2>
+        <div class ="column">
+            <table>
+                <tr>
+                    <th>독서와 무제한 친해지리</th>
+                </tr>
+                <tr>
+                    <td>저는 책을 열심히 읽고 말거에요</td>
+                </tr>
+            </table>
+        </div>
+    </center>
+    </div>
+
+
+    <!-- <button><a href = "http://localhost:3000/user/login">로그인하기</a></button>
     <button><a href = "http://localhost:3000/user/addUser">회원 가입</a></button>
-    <button><a href = "http://localhost:3000/management/list">관리</a></button>
+    <button><a href = "http://localhost:3000/management/list">관리</a></button> -->
 </body>
 </html>
+
+
+**HOME**
+
+// column 1
+// 오늘의 책-책이름, 작가 목록 띄우기
+SELECT Book.*
+    FROM Book
+    NATURAL JOIN Book_Recommend
+    WHERE Book_Recommend.category='book_today' AND Book_Recommend.book_id=Book.book_id;
+
+더보기 버튼 누르면
+book_id와 동일한 book 정보 페이지 띄우기
+
+
+// column 2
+// 오늘의 리딩북-책이름, 작가 목록 띄우기
+SELECT Book.*
+    FROM Book
+    NATURAL JOIN Book_Recommend
+    WHERE Book_Recommend.category='readingbook' AND Book_Recommend.book_id=Book.book_id;
+
+더보기 버튼 누르면
+book_id와 동일한 book 정보 페이지 띄우기
+
+// column 3
+// 최신 인용문-책 이름, 작가 이름, 함께 읽고 있는 회원 수, 인용문, 인용자
+SELECT Book.title, Book.writer, Book.borrow_count
+    FROM Book
+    NATURAL JOIN Quotation
+    WHERE Quotation.book_id = Book.book_id;
+    ->> 책이름: title, 작가이름: writer, 함께 읽고 있는 회원 수: borrow_count
+SELECT * FROM Quotation;
+    ->> 인용자: user_index, 인용문: contents, 날짜: date
+
+
+//column 4
+//관리자 계정 포스트 업데이트 - 밀리 작가 특집
+SELECT * FROM Post
+    WHERE user_index='admin'
+    ORDER BY datetime
+    DESC LIMIT 3;
+
+//column 5
+//유저 서평/ 읽은 책 개수 카운트로 순위 업데이트
+SELECT user_index, count(*)
+    FROM Book_Read
+    WHERE borrow_date IS NOT NULL
+    GROUP BY user_index
+    ORDER BY count(*)
+    DESC LIMIT 10;
+
+//column 6
+//북 차트 - 주간 월간 연간 누적
+
+//column 7
+//밀리 오리지널 - 출판사가 밀리의서재인 책 
+
+//column 8
+//감성태그 픽
+//북 태그 중에 공감 순으로 불러오기
+//태그로 책 검색 - 내 서재에 많이 담긴 순으로 정렬
+
+//column 9
+//이벤트 목록
+//이벤트 선택시 이벤트 내용과 댓글 불러오기

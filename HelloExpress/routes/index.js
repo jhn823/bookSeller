@@ -12,22 +12,39 @@ var connection = mysql.createConnection({
   multipleStatements: true,
 });
 
+// var connection = mysql.createConnection({
+
+//   host : 'localhost',
+//   user: 'root',
+//   password: 'sodlfma53',
+//   database: 'class',
+//   multipleStatements: true,
+// });
+
 var obj = {};
-var userID = 26;
+var userID = -1;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.redirect("/home");
+  res.render('home');
+});
+/* GET search page. */
+router.get('/search', function(req, res, next) {
+  res.render('search');
 });
 
-router.get('/home', function(req, res, next) {
-  res.render('home');
+/* GET management page. */
+router.get('/management', function(req, res, next) {
+  if(userID==-1) res.render('user/login');
+  res.render('management');
 });
 
 /* login page */
 router.get('/user/login', function(req, res, next) {
   res.render('user/login');
 });
+
+
 /*login 확인 과정*/
 router.post('/user/login', function(req, res, next) {
   var body = req.body;//email, password
@@ -93,11 +110,7 @@ router.post('/user/addUser', function(req, res, next) {
 
 
 
-/*관리페이지*/
-router.get('/management/list', function(req, res, next) {
-  if(userID==-1) res.render('user/login');
-  res.render('management/list');
-});
+
 
 
 router.get('/index', function(req, res, next) {

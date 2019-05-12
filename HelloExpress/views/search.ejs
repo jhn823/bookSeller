@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/search.css' />
+    <title>밀리의 서재</title>
+</head>
+<body> 
+    <div class = "main_menu">
+            <center>
+                <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
+                </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
+                </h2> <h2 id ="menu"><a href ="#">내 서재</a></h2>
+                <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
+            </center>
+    </div>
+    <hr />
+    <div>
+        <center>
+            <div class = "column">
+            <form action="/search" method="GET">
+                <table>
+                    <tr>
+                        <td><input type="text" name="q" placeholder="검색하세요"></td>
+                    </tr>
+                </table>
+            </form>
+        </center>
+    </div>
+    </div>
+    
+
+</body>
+</html>
