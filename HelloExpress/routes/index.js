@@ -3,9 +3,13 @@ var router = express.Router();
 var mysql = require("mysql");
 
 var connection = mysql.createConnection({
-  user: "root",
-  password: "sodlfma53",
-  database: "class"
+  connectionLimit: 100,
+  host : 'dbdbdb.cibpms4ouvxz.us-east-2.rds.amazonaws.com',
+  port : 3306,
+  user: 'root',
+  password: 'qwer1234',
+  database: 'class',
+  multipleStatements: true,
 });
 
 var obj = {};
@@ -27,16 +31,16 @@ router.get('/user/login', function(req, res, next) {
 /*login 확인 과정*/
 router.post('/user/login', function(req, res, next) {
   var body = req.body;//email, password
-  connection.query("SELECT COUNT (User_index) as count FROM User WHERE ( Email = '" + body.email + "' AND Password = '" + body.password +"' )",
+  connection.query("SELECT COUNT (user_index) as count FROM User WHERE ( email = '" + body.email + "' AND Password = '" + body.password +"' )",
   function(err, result, fields){
     if(err){
       console.log("쿼리문에 오류가 있습니다.");
       console.log(err);
     }
     else if(result && result[0].count ==1){
-      connection.query("SELECT *  FROM User WHERE  Email = '" + body.email + "'",
+      connection.query("SELECT *  FROM User WHERE  email = '" + body.email + "'",
       function(err, result, fields){
-        userID = result[0].User_index;
+        userID = result[0].user_index;
         res.redirect("/home");
       }) 
     }
@@ -54,7 +58,7 @@ router.get('/user/addUser', function(req, res, next) {
 router.post('/user/addUser', function(req, res, next) {
   var body = req.body;
   var sql;
-  sql =  "SELECT COUNT (User_index) as count FROM User WHERE Email = '" + body.email + "'";
+  sql =  "SELECT COUNT (user_index) as count FROM User WHERE email = '" + body.email + "'";
   connection.query(sql,function(err, result, fields){
     if (err) throw err;
 
@@ -62,17 +66,17 @@ router.post('/user/addUser', function(req, res, next) {
       res.render('alert', {message : 'same email'}); 
     }
     else{
-      connection.query("INSERT INTO User (Email, Password, Name, Sns) VALUES (?, ?, ?, ?)", [
+      connection.query("INSERT INTO User (email, Password, Name, Sns) VALUES (?, ?, ?, ?)", [
         body.email, body.password, body.name, body.sns
       ]);
-      connection.query("SELECT User_index FROM User WHERE " + "'" + body.email + "' = Email",
+      connection.query("SELECT user_index FROM User WHERE " + "'" + body.email + "' = email",
       function(err, result, fields){
         if (err) throw err;
         else{
-          userID = result[0].User_index;
+          userID = result[0].user_index;
           var libraryName = "유명한 여행가의 서재_" + String(userID);
           var nickName = "유명한 여행가_"+ String(userID);
-          sql = "UPDATE User SET LibraryName = '" + libraryName+"', NickName = '"+ nickName +"' WHERE User_index = " + String(userID) ;
+          sql = "UPDATE User SET libraryName = '" + libraryName+"', NickName = '"+ nickName +"' WHERE user_index = " + String(userID) ;
           connection.query(sql, function (err, result) {
             if (err) throw err;
             console.log(result.affectedRows + " record(s) updated");
@@ -127,7 +131,7 @@ router.post('/create', function(req, res, next) {
 
 /*관리->계정관리*/
 router.get('/management/myinfo', function(req, res, next) {
-  sql = "SELECT * FROM User WHERE " + "'" + userID + "' = User_index";
+  sql = "SELECT * FROM User WHERE " + "'" + userID + "' = user_index";
   connection.query(sql,function(err, result, fields){
     if (err) throw err;
     else{
@@ -147,7 +151,7 @@ router.get('/management/myinfo/set_writer', function(req, res, next) {
 });
 router.post('/management/myinfo/set_writer', function(req, res, next) {
   var body = req.body;
-  sql = "UPDATE User SET NickName = '"+ body.name +"' WHERE User_index = " + String(userID) ;
+  sql = "UPDATE User SET NickName = '"+ body.name +"' WHERE user_index = " + String(userID) ;
   connection.query(sql, function (err, result) {
     if (err) throw err;
     console.log(result.affectedRows + " record(s) updated");
@@ -162,7 +166,7 @@ router.get('/management/myinfo/set_shelf', function(req, res, next) {
 });
 router.post('/management/myinfo/set_shelf', function(req, res, next) {
   var body = req.body;
-  sql = "UPDATE User SET NickName = '"+ body.name +"' WHERE User_index = " + String(userID) ;
+  sql = "UPDATE User SET libraryName = '"+ body.name +"' WHERE user_index = " + String(userID) ;
   connection.query(sql, function (err, result) {
     if (err) throw err;
     console.log(result.affectedRows + " record(s) updated");
@@ -176,7 +180,7 @@ router.get('/management/myinfo/set_description', function(req, res, next) {
 });
 router.post('/management/myinfo/set_description', function(req, res, next) {
   var body = req.body;
-  sql = "UPDATE User SET LibraryDescription = '"+ body.description +"' WHERE User_index = " + String(userID) ;
+  sql = "UPDATE User SET libraryDescription = '"+ body.description +"' WHERE user_index = " + String(userID) ;
   connection.query(sql, function (err, result) {
     if (err) throw err;
     console.log(result.affectedRows + " record(s) updated");
@@ -191,7 +195,7 @@ router.get('/management/myinfo/set_phone', function(req, res, next) {
 
 router.post('/management/myinfo/set_phone', function(req, res, next) {
   var body = req.body;
-  sql = "UPDATE User SET PhoneNumber = '"+ body.phone +"' WHERE User_index = " + String(userID) ;
+  sql = "UPDATE User SET PhoneNumber = '"+ body.phone +"' WHERE user_index = " + String(userID) ;
   connection.query(sql, function (err, result) {
     if (err) throw err;
     console.log(result.affectedRows + " record(s) updated");
@@ -206,7 +210,7 @@ router.get('/management/myinfo/set_email', function(req, res, next) {
 
 router.post('/management/myinfo/set_email', function(req, res, next) {
   var body = req.body;
-  sql = "UPDATE User SET Email = '"+ body.email +"' WHERE User_index = " + String(userID) ;
+  sql = "UPDATE User SET email = '"+ body.email +"' WHERE user_index = " + String(userID) ;
   connection.query(sql, function (err, result) {
     if (err) throw err;
     console.log(result.affectedRows + " record(s) updated");
@@ -219,11 +223,23 @@ router.post('/management/myinfo/set_email', function(req, res, next) {
 router.get('/management/subscribe', function(req, res, next) {
   res.render('management/subscribe');
 });
-
-
+// SELECT COUNT (*) as count FROM Buy;
+/*관리->구독관리->구독내역 조회*/
 router.get('/management/subscribe/history', function(req, res, next) {
-  connection.query("SELECT * FROM Subscribe;", function(err, result, fields){
+  console.log(userID)
+  sql = "SELECT * FROM Buy WHERE UserID = " + String(userID) + ";SELECT COUNT (*) as count FROM Buy WHERE UserID = " + String(userID) +";" ;
+  connection.query(sql,function(err, result, fields){
+  obj = 
+  {print: result};
+  console.log(result);
+  res.render('management/subscribe/history', obj);               
+  });
+});
 
+/*관리->구독관리->구독취소*/
+router.get('/management/subscribe/history', function(req, res, next) {
+  connection.query("SELECT * FROM Buy;", function(err, result, fields){
+    console.log(result);
   obj = 
   {print: result};
   res.render('management/subscribe/history', obj);               

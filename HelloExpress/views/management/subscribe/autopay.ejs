@@ -10,7 +10,6 @@
     <hr>
 
     <table id="table" > 
-          <p>count  <%= print[1][0].count %></p>  
         <thead>  
             <tr>  
                 <th>Index</th>  
@@ -21,7 +20,7 @@
             </tr>  
         </thead>  
          <tbody>  
-         <% print[0].forEach(function(result) { %>
+         <% print.forEach(function(result) { %>
             <tr>  
                 <td><%= result.index %></td>  
                 <td><%= result.UserID %></td>
