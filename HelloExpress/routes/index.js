@@ -9,12 +9,13 @@ var connection = mysql.createConnection({
 });
 
 var obj = {};
-var userID = -1;
+var userID = 26;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.redirect("/home");
 });
+
 router.get('/home', function(req, res, next) {
   res.render('home');
 });
@@ -56,8 +57,7 @@ router.post('/user/addUser', function(req, res, next) {
   sql =  "SELECT COUNT (User_index) as count FROM User WHERE Email = '" + body.email + "'";
   connection.query(sql,function(err, result, fields){
     if (err) throw err;
-    
-  
+
     else if(result && result[0].count ==1){
       res.render('alert', {message : 'same email'}); 
     }
@@ -97,18 +97,15 @@ router.get('/management/list', function(req, res, next) {
 
 
 router.get('/index', function(req, res, next) {
-  connection.query("SELECT * FROM book;", function(err, result, fields){
-    
-    if(err){
-      throw err;
-  } else {
-    console.log("UID : " + userID);
+  connection.query("SELECT * FROM book;", function(err, books, fields){
+    connection.query("SELECT * FROM book;", function(err, counts, fields){
       obj = 
-      {print: result,
-       UID : userID};
-      res.render('index', obj);                
-  }
+      {print: books,
+       counts : count};
+      res.render('index', obj);     
+    });       
   });
+
 });
 
 /*Get 책 목록 추가 page*/
@@ -187,20 +184,53 @@ router.post('/management/myinfo/set_description', function(req, res, next) {
   res.redirect("/management/myinfo");
 });
 
-/*관리->계정관리->서재 공개설정 수정*/
-router.get('/management/myinfo/set_open', function(req, res, next) {
-  res.render('management/myinfo/set_open');
+/*관리->계정관리->핸드폰 번호 수정*/
+router.get('/management/myinfo/set_phone', function(req, res, next) {
+  res.render('management/myinfo/set_phone');
 });
 
-router.post('/management/myinfo/set_open', function(req, res, next) {
+router.post('/management/myinfo/set_phone', function(req, res, next) {
   var body = req.body;
-  sql = "UPDATE User SET LibraryVisibility = '"+ body.open +"' WHERE User_index = " + String(userID) ;
+  sql = "UPDATE User SET PhoneNumber = '"+ body.phone +"' WHERE User_index = " + String(userID) ;
   connection.query(sql, function (err, result) {
     if (err) throw err;
     console.log(result.affectedRows + " record(s) updated");
   });
   res.redirect("/management/myinfo");
 });
+
+/*관리->계정관리->이메일 수정*/
+router.get('/management/myinfo/set_email', function(req, res, next) {
+  res.render('management/myinfo/set_email');
+});
+
+router.post('/management/myinfo/set_email', function(req, res, next) {
+  var body = req.body;
+  sql = "UPDATE User SET Email = '"+ body.email +"' WHERE User_index = " + String(userID) ;
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect("/management/myinfo");
+});
+
+
+/*관리->구독관리*/
+router.get('/management/subscribe', function(req, res, next) {
+  res.render('management/subscribe');
+});
+
+
+router.get('/management/subscribe/history', function(req, res, next) {
+  connection.query("SELECT * FROM Subscribe;", function(err, result, fields){
+
+  obj = 
+  {print: result};
+  res.render('management/subscribe/history', obj);               
+  });
+});
+
+
 
 
 

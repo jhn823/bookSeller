@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Document</title>
+</head>
+<body>
+    <h1>구독내역조회</h1>
+    <hr>
+
+    <table id="table" > 
+        <thead>  
+            <tr>  
+                <th>Index</th>  
+                <th>UserId</th>  
+                <th>From</th>  
+                <th>To</th>  
+                <th>Amount</th>  
+            </tr>  
+        </thead>  
+         <tbody>  
+         <% print.forEach(function(result) { %>
+            <tr>  
+                <td><%= result.index %></td>  
+                <td><%= result.UserID %></td>
+                <td><%= result.From %></td>
+                <td><%= result.To %></td>
+                <td><%= result.Amount %></td>
+            </tr>                                   
+         <% }) %>
+         </tbody>
+    </table>  
+</body>
+</html>

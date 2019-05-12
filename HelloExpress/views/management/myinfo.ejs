@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>계정 및 구독관리</h1>
+    <h1>계정관리</h1>
     <hr>
     <table>
             <tr>
@@ -31,17 +31,18 @@
                 <% } %>
             </tr>
             <tr>
-                <td>휴대전화번호</td>
-                <td></td>
+                <td><a href="http://localhost:3000/management/myinfo/set_phone">휴대폰 번호</a></td>
+                <td><%= user[0].PhoneNumber %></td>
             </tr>
             <tr>
-                <td>이메일</td>
-                <td></td>
+                <td><a href="http://localhost:3000/management/myinfo/set_email">이메일 주소</a></td>
+                <td><%= user[0].Email %></td>
             </tr>
             <tr>
                 <td>
                 </td>
             </tr>
         </table>
+       
 </body>
 </html>
