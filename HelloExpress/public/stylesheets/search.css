@@ -41,7 +41,7 @@ a{
 }
 table { 
   display : block;
-  width : 80%;
+  width : 100%;
 }
 tr{
   margin : 10px;
@@ -51,7 +51,7 @@ th{
   font-size : 20px;
 }
 input{
-  width : 500px;
+  width : 100%;
   font-size : 15px;
   border : 1px solid black;
   padding: 10px;

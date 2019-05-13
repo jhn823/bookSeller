@@ -1,48 +1,55 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kr">
 <head>
     <meta charset="UTF-8">
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <title>Document</title>
+    <link rel='stylesheet' href='/stylesheets/home.css' />
+    <title>밀리의 서재</title>
 </head>
-<body>
-    <h1>계정관리</h1>
-    <hr>
-    <table>
-            <tr>
-                <td><a href="http://localhost:3000/management/myinfo/set_writer">필명</a></td>
-                <td><%=  user[0].nickName %></td>
-            </tr>
-            <tr>
-                <td><a href="http://localhost:3000/management/myinfo/set_shelf">서재명</a></td>
-                <td><%=  user[0].libraryName %></td>
-            </tr>
-            <tr>
-                <td><a href="http://localhost:3000/management/myinfo/set_description">서재소개</a></td>
-                <td><%= user[0].libraryDescription %></td>
-
-            </tr>
-            <tr>
-                <td><a href="http://localhost:3000/management/myinfo/set_open">공개여부</a></td>
-                <% if(user[0].library_visibility == 1){%>
-                    <td>공개</td>
-                <% }else{%>
-                    <td>비공개</td>
-                <% } %>
-            </tr>
-            <tr>
-                <td><a href="http://localhost:3000/management/myinfo/set_phone">휴대폰 번호</a></td>
-                <td><%= user[0].phoneNumber %></td>
-            </tr>
-            <tr>
-                <td><a href="http://localhost:3000/management/myinfo/set_email">이메일 주소</a></td>
-                <td><%= user[0].email %></td>
-            </tr>
-            <tr>
-                <td>
-                </td>
-            </tr>
-        </table>
-       
+<body>  
+    <div>
+        <center>
+            <h1>계정관리</h1>
+            <hr>
+            <div class = "column">
+                <table>
+                    <tr>
+                        <td><a href="http://localhost:3000/management/myinfo/set_writer">필명</a></td>
+                        <td><%=  user[0].nickName %></td>
+                    </tr>
+                    <tr>
+                        <td><a href="http://localhost:3000/management/myinfo/set_shelf">서재명</a></td>
+                        <td><%=  user[0].libraryName %></td>
+                    </tr>
+                    <tr>
+                        <td><a href="http://localhost:3000/management/myinfo/set_description">서재소개</a></td>
+                        <td><%= user[0].libraryDescription %></td>
+        
+                    </tr>
+                    <tr>
+                        <td><a href="http://localhost:3000/management/myinfo/set_open">공개여부</a></td>
+                        <% if(user[0].library_visibility == 1){%>
+                            <td>공개</td>
+                        <% }else{%>
+                            <td>비공개</td>
+                        <% } %>
+                    </tr>
+                    <tr>
+                        <td><a href="http://localhost:3000/management/myinfo/set_phone">휴대폰 번호</a></td>
+                        <td><%= user[0].phoneNumber %></td>
+                    </tr>
+                    <tr>
+                        <td><a href="http://localhost:3000/management/myinfo/set_email">이메일 주소</a></td>
+                        <td><%= user[0].email %></td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </center>
+    </div>
 </body>
 </html>

@@ -12,14 +12,6 @@ var connection = mysql.createConnection({
   multipleStatements: true,
 });
 
-// var connection = mysql.createConnection({
-
-//   host : 'localhost',
-//   user: 'root',
-//   password: 'sodlfma53',
-//   database: 'class',
-//   multipleStatements: true,
-// });
 
 var obj = {};
 var userID = -1;
@@ -37,6 +29,17 @@ router.get('/search', function(req, res, next) {
 router.get('/management', function(req, res, next) {
   if(userID==-1) res.render('user/login');
   res.render('management');
+});
+
+/* GET shelf page. */
+router.get('/shelf', function(req, res, next) {
+  if(userID==-1) res.render('user/login');
+  res.render('shelf');
+});
+
+/* GET book page. */
+router.get('/book', function(req, res, next) {
+  res.render('book');
 });
 
 /* login page */
@@ -58,7 +61,7 @@ router.post('/user/login', function(req, res, next) {
       connection.query("SELECT *  FROM User WHERE  email = '" + body.email + "'",
       function(err, result, fields){
         userID = result[0].user_index;
-        res.redirect("/home");
+        res.redirect("/");
       }) 
     }
     else{
@@ -249,15 +252,19 @@ router.get('/management/subscribe/history', function(req, res, next) {
   });
 });
 
+
+
 /*관리->구독관리->구독취소*/
-router.get('/management/subscribe/history', function(req, res, next) {
-  connection.query("SELECT * FROM Buy;", function(err, result, fields){
-    console.log(result);
-  obj = 
-  {print: result};
-  res.render('management/subscribe/history', obj);               
-  });
-});
+// router.get('/management/subscribe/autopay', function(req, res, next) {
+//   var sql = "SELECT MAX (Index) FROM Buy;";
+//   connection.query(sql, function(err, result, fields){
+//     if (err) throw err;
+//     console.log(result);
+//   obj = 
+//   {print: result};
+//   res.render('management/subscribe/autopay', obj);               
+//   });
+// });
 
 
 

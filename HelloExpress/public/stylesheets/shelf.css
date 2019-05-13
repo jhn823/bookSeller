@@ -2,6 +2,14 @@ body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
+.header{
+  background-color : whitesmoke;
+  width : 40%;
+}
+.left{
+  text-align : left;
+  margin : 10px;
+}
 
 .main_menu {
   margin : 10px;
@@ -40,7 +48,7 @@ a{
   font-weight : bold;
 }
 table { 
-  width : 35%;
+  width : 100%;
 }
 td{
   margin : 10px;
