@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/search.css' />
     <title>Document</title>
 </head>
 <body>
@@ -13,7 +13,7 @@
           <p>count  <%= print[1][0].count %></p>  
         <thead>  
             <tr>  
-                <th>Index</th>  
+                <th>구매ID</th>  
                 <th>UserId</th>  
                 <th>From</th>  
                 <th>To</th>  
@@ -23,11 +23,11 @@
          <tbody>  
          <% print[0].forEach(function(result) { %>
             <tr>  
-                <td><%= result.index %></td>  
-                <td><%= result.UserID %></td>
-                <td><%= result.From.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td>
-                <td><%= result.To.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td>
-                <td><%= result.Amount %></td>
+                <td><%= result.buy_id %></td>  
+                <td><%= result.user_index %></td>
+                <td><%= result.from_date.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td>
+                <td><%= result.to_date.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td>
+                <td><%= result.amount %></td>
             </tr>                                   
          <% }) %>
          </tbody>

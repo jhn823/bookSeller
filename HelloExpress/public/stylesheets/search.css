@@ -43,14 +43,31 @@ table {
   display : block;
   width : 100%;
 }
+tbody{
+  display : block;
+  width : 100%;
+  align-content: center;
+}
 tr{
-  margin : 10px;
   text-align: center;
+  display : block;
+  width : 100%;
+  border : 10px;
+
+}
+td{
+  display : inline-block;
+  border : 10px;
+}
+button{
+  height : 40px;
+  width : 40px;
 }
 th{
   font-size : 20px;
 }
 input{
+  margin : 10px;
   width : 100%;
   font-size : 15px;
   border : 1px solid black;

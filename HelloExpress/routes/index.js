@@ -22,7 +22,19 @@ router.get('/', function(req, res, next) {
 });
 /* GET search page. */
 router.get('/search', function(req, res, next) {
-  res.render('search');
+  var q =  req.param("q");
+  if (typeof q == "undefined") {
+    res.render('search');
+  }
+  else{
+    sql = "SELECT * FROM Book WHERE (title LIKE '%" + q +"%') OR (writer LIKE '%" + q +"%') OR (publisher LIKE '%" + q +"%');";
+    console.log(sql)
+    connection.query(sql, function(err, result, fields){
+    console.log(result);
+    res.json(result);
+    });
+  }
+
 });
 
 /* GET management page. */
@@ -60,6 +72,7 @@ router.post('/user/login', function(req, res, next) {
     else if(result && result[0].count ==1){
       connection.query("SELECT *  FROM User WHERE  email = '" + body.email + "'",
       function(err, result, fields){
+        
         userID = result[0].user_index;
         res.redirect("/");
       }) 
@@ -243,8 +256,11 @@ router.get('/management/subscribe', function(req, res, next) {
 /*관리->구독관리->구독내역 조회*/
 router.get('/management/subscribe/history', function(req, res, next) {
   console.log(userID)
-  sql = "SELECT * FROM Buy WHERE UserID = " + String(userID) + ";SELECT COUNT (*) as count FROM Buy WHERE UserID = " + String(userID) +";" ;
+  sql = "SELECT * FROM Buy WHERE user_index = " + String(userID) + ";SELECT COUNT (*) as count FROM Buy WHERE user_index = " + String(userID) +";" ;
   connection.query(sql,function(err, result, fields){
+    if(!result){
+      res.render('alert', {message : 'no history'}); 
+    }
   obj = 
   {print: result};
   console.log(result);
@@ -253,18 +269,29 @@ router.get('/management/subscribe/history', function(req, res, next) {
 });
 
 
-
-/*관리->구독관리->구독취소*/
+// /*관리->구독관리->구독취소*/
 // router.get('/management/subscribe/autopay', function(req, res, next) {
 //   var sql = "SELECT MAX (Index) FROM Buy;";
 //   connection.query(sql, function(err, result, fields){
 //     if (err) throw err;
 //     console.log(result);
-//   obj = 
-//   {print: result};
-//   res.render('management/subscribe/autopay', obj);               
+//     if(!result){
+//       res.render('alert', {message : 'no history'}); 
+//     }
+//     else{   
+//     obj = {print: result};
+//     res.render('management/subscribe/autopay', obj);               
+
+
+//     }
+
 //   });
 // });
+
+
+
+
+
 
 
 
