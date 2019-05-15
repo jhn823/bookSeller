@@ -52,8 +52,6 @@ router.post('/user/login', function(req, res, next) {
 });
 
 
-
-/* GET home page. */
 /* GET home page. */
 router.get('/', function(req, res, next) {
   sql = 
@@ -66,7 +64,12 @@ router.get('/', function(req, res, next) {
         NATURAL JOIN Book_Recommend \
         WHERE Book_Recommend.category='오늘의 리딩북' AND Book_Recommend.book_id=Book.book_id;" 
     // [2] column 3 - 실시간 인용문
-
+    + "SELECT t2.nickName, t1.content, t1.datetime, t3.title\
+        FROM (SELECT * FROM Quotation ORDER BY datetime DESC LIMIT 5) t1\
+        LEFT JOIN (SELECT * FROM User) t2\
+        ON t1.user_index = t2.user_index\
+        LEFT JOIN (SELECT * FROM Book) t3\
+        ON t1.book_id = t3.book_id;"
     // [3] column 4 - 밀리 작가 특집
     + "SELECT * FROM Post \
         WHERE user_index='1' \
@@ -74,8 +77,8 @@ router.get('/', function(req, res, next) {
     // [4] column 5 - 독서
     + "SELECT t1.num, t2.nickName \
         FROM (SELECT user_index, count(*) AS num \
-        FROM Book_Read WHERE return_date IS NOT NULL \
-        GROUP BY user_index ORDER BY count(*) DESC LIMIT 10) t1 \
+          FROM Book_Read WHERE return_date IS NOT NULL \
+          GROUP BY user_index ORDER BY count(*) DESC LIMIT 10) t1 \
         LEFT JOIN (SELECT * FROM User) t2 \
         ON t1.user_index = t2.user_index;"
     // [5] column 5 - 서평
@@ -115,7 +118,7 @@ router.get('/', function(req, res, next) {
     + "SELECT * FROM Book WHERE publisher = '밀리의서재';"
     // [10] column 8 - 태그 픽
     // [11] column 9 - 이벤트 목록
-    // + "SELECT * FROM Event WHERE DATE_SUB(NOW(), "
+    + "SELECT * FROM Event WHERE to_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 100 MONTH)"
     ;
 
   connection.query(sql, function(err, query, fields){
@@ -127,13 +130,15 @@ router.get('/', function(req, res, next) {
     {
       book_today: query[0],
       readingbook_today: query[1],
-      weekly_writer: query[2],
-      user_read: query[3],
-      user_post: query[4],
-      book_month: query[5],
-      book_week: query[6],
-      book_year: query[7],
-      mili_original: query[8],
+      quotation: query[2],
+      weekly_writer: query[3],
+      user_read: query[4],
+      user_post: query[5],
+      book_month: query[6],
+      book_week: query[7],
+      book_year: query[8],
+      mili_original: query[9],
+      event: query[10]
     };
     res.render('home',obj);
   });
