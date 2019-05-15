@@ -65,7 +65,24 @@
 
         <h2>실시간 인용문</h2>
         <div class ="column">
-            
+            <table>
+                <tr>
+                    <th>유저</th>
+                    <th>책</th>
+                    <th>인용문</th>
+                    <th>날짜</th>
+                </tr>
+                <tr>
+                    <td>
+                        <% quotation.forEach(function(quotation) { %>
+                            <tr><td><%= quotation.nickName %></td>
+                            <td><%= quotation.title %></td>
+                            <td><%= quotation.content %></td>
+                            <td><%= quotation.datetime.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td></tr>
+                            <% }) %>
+                    </td>
+                </tr>
+            </table> 
         </div>
         <h2>밀리 작가 특집</h2>
         <div class ="column">
@@ -77,7 +94,7 @@
                 <td>
                         <% weekly_writer.forEach(function(weekly_writer) { %>
                             <tr><td><%= weekly_writer.title %></td>
-                            <td><%= weekly_writer.datetime %></td></tr>
+                            <td><%= weekly_writer.datetime.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td></tr>
                             <% }) %>
                     </td>
                 
@@ -198,15 +215,17 @@
                 <p>#밤에읽기좋은</p>
             </div>
         </div>
-        <h2>이벤트 목록</h2>
+        <h2>진행중인 이벤트</h2>
         <div class ="column">
             <table>
+                <% event.forEach(function(event) { %>
                 <tr>
-                    <th>독서와 무제한 친해지리</th>
+                    <th><%= event.title %></th>
                 </tr>
                 <tr>
-                    <td>저는 책을 열심히 읽고 말거에요</td>
+                    <td><%= event.to_date.toISOString().replace(/T/, ' ').replace(/\..+/, '')%> 까지</td>
                 </tr>
+                <% }) %>
             </table>
         </div>
     </center>
