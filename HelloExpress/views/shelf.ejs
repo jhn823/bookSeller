@@ -79,9 +79,10 @@
                         <th>필명</th>
                     </tr>
                 <% myposts.forEach(function(mypost) { %>
+                    <% link = "http://localhost:3000/shelf/post?pid=" + mypost.post_id+ "&uid=" +user[0].user_index %>
                         <tr>
-                            <td><%= mypost.title %></td>
-                            <td><%= user[0].nickName %></td>
+                            <td><a href = <%=link %>><%= mypost.title %></a></td>
+                            <td><a href = <%=link %>><%= user[0].nickName %></a></td>
                         </tr>                                  
                     <% }) %>
                     </table>
@@ -96,9 +97,10 @@
                             <th>필명</th>
                         </tr>
                     <% followingPosts.forEach(function(followingPost) { %>
+                        <% link = "http://localhost:3000/shelf/post?pid=" + followingPost.post_id + "&uid=" +followingPost.user_index %>
                             <tr>
-                                <td><%= followingPost.title %></td>
-                                <td><%= followingPost.nickName %></td>
+                                <td><a href = <%=link %>> <%= followingPost.title %></a></td>
+                                <td> <a href = <%=link %>> <%= followingPost.nickName %></a></td>
                             </tr>                                  
                         <% }) %>
                         </table>

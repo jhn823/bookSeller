@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require("mysql");
-var wait=require('wait.for');
 
 var connection = mysql.createConnection({
   connectionLimit: 100,
@@ -23,6 +22,8 @@ var userID = -1
 router.get('/', function(req, res, next) {
   if(!req.session.userID) res.redirect('user/login');
   else{
+    console.log("session" + req.session.userID);
+    console.log("shelf");
     userID = req.session.userID;
 
     sql = 
@@ -39,11 +40,10 @@ router.get('/', function(req, res, next) {
       //[6]읽은 책 수
       "SELECT COUNT (book_read_id) as count FROM Book_Read WHERE return_date is not NULL AND '" + userID + "' = user_index;"+
       //[7]인용문 수
-      "SELECT COUNT (quotation_id) as count FROM Quotation WHERE '" + userID + "' = user_index;"+
+      "SELECT COUNT (quotation_id) as count FROM Quotation WHERE '" + userID + "' = user_index;";
 
 
-
-    console.log(sql);
+    console.log("shelf sql : " +sql);
     connection.query(sql,function(err, result, fields){
       if (err) throw err;
       else{
@@ -67,6 +67,29 @@ router.get('/', function(req, res, next) {
   
 
    
+});
+
+
+/* GET shelf/post page. */
+router.get('/post', function(req, res, next) {
+
+    userID = req.session.userID;
+    var pid =  req.param("pid");
+    var uid =  req.param("uid");
+    sql = 
+    "SELECT * FROM User WHERE " + "'" + uid+ "' = user_index;" + 
+    "SELECT * FROM Post WHERE '" + pid + "' = post_id;";
+          connection.query(sql, function(err, result, fields){
+      if (err) throw err;
+      else {
+        console.log(result);
+        obj = {
+            writer : result[0],
+            post : result[1]}
+        res.render('shelf/post',obj);
+      }
+    });
+
 });
 
 
