@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require("mysql");
-var wait=require('wait.for');
 
 var connection = mysql.createConnection({
   connectionLimit: 100,
