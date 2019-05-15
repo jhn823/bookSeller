@@ -14,11 +14,134 @@ var connection = mysql.createConnection({
 
 
 var obj = {};
-var userID = -1;
+
+var userID = -1
+
+
+/* login page */
+router.get('/user/login', function(req, res, next) {
+  res.render('user/login');
+});
+
+
+/*login 확인 과정*/
+router.post('/user/login', function(req, res, next) {
+  console.log("in");
+  var body = req.body;//email, password
+  connection.query("SELECT COUNT (user_index) as count FROM User WHERE ( email = '" + body.email + "' AND Password = '" + body.password +"' )",
+  function(err, result, fields){
+    if(err){
+      console.log("쿼리문에 오류가 있습니다.");
+      console.log(err);
+    }
+    else if(result && result[0].count ==1){
+      connection.query("SELECT *  FROM User WHERE  email = '" + body.email + "'",
+      function(err, result, fields){
+        console.log(result);
+        userID = result[0].user_index;
+        req.session.userID = userID;
+        if(req.session.userID)  console.log("success" + req.session.userID)
+        // req.app.locals.userID = result[0].user_index;
+        res.redirect("/");
+      }) 
+    }
+    else{
+      res.render('alert', {message : 'no such user'}); 
+    }
+  });
+});
+
+
 
 /* GET home page. */
+/* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('home');
+  sql = 
+    // [0] column 1 - 오늘의 책
+    "SELECT Book.* FROM Book \
+      NATURAL JOIN Book_Recommend \
+      WHERE Book_Recommend.category='오늘의 책' AND Book_Recommend.book_id=Book.book_id;"
+    // [1] column 2 - 오늘의 리딩북
+    + "SELECT Book.* FROM Book \
+        NATURAL JOIN Book_Recommend \
+        WHERE Book_Recommend.category='오늘의 리딩북' AND Book_Recommend.book_id=Book.book_id;" 
+    // [2] column 3 - 실시간 인용문
+
+    // [3] column 4 - 밀리 작가 특집
+    + "SELECT * FROM Post \
+        WHERE user_index='1' \
+        ORDER BY datetime DESC LIMIT 3;"
+    // [4] column 5 - 독서
+    + "SELECT t1.num, t2.nickName \
+        FROM (SELECT user_index, count(*) AS num \
+        FROM Book_Read WHERE return_date IS NOT NULL \
+        GROUP BY user_index ORDER BY count(*) DESC LIMIT 10) t1 \
+        LEFT JOIN (SELECT * FROM User) t2 \
+        ON t1.user_index = t2.user_index;"
+    // [5] column 5 - 서평
+    + "SELECT t1.num, t2.nickName \
+        FROM (SELECT user_index, count(*) AS num \
+        FROM Post WHERE user_index != '1' \
+        GROUP BY user_index ORDER BY count(*) DESC LIMIT 10) t1 \
+        LEFT JOIN (SELECT * FROM User) t2 \
+        ON t1.user_index = t2.user_index;"
+    // [6] column 6 - 월간 차트
+    + "SELECT t1.num, t2.title, t2.writer, t2.publisher \
+        FROM ( \
+          SELECT book_id, count(*) AS num \
+            FROM Book_Read \
+            WHERE DATE(borrow_date\
+          ) \
+        BETWEEN DATE_ADD(NOW(),INTERVAL -5 MONTH ) AND NOW() \
+        GROUP BY book_id \
+        ORDER BY count(*) DESC LIMIT 10) t1 \
+        NATURAL JOIN (SELECT * FROM Book) t2 \
+        WHERE t1.book_id = t2.book_id;"
+    // [7] column 6 - 주간 차트
+    + "SELECT t1.num, t2.title, t2.writer, t2.publisher \
+        FROM ( \
+          SELECT book_id, count(*) AS num \
+            FROM Book_Read \
+            WHERE DATE(borrow_date\
+          ) \
+        BETWEEN DATE_ADD(NOW(),INTERVAL -5 WEEK ) AND NOW() \
+        GROUP BY book_id \
+        ORDER BY count(*) DESC LIMIT 10) t1 \
+        NATURAL JOIN (SELECT * FROM Book) t2 \
+        WHERE t1.book_id = t2.book_id;"
+    // [8] column 6 - 누적 차트
+    + "SELECT * FROM Book ORDER BY like_count DESC LIMIT 10;"
+    // [9] column 7 -밀리 오리지널
+    + "SELECT * FROM Book WHERE publisher = '밀리의서재';"
+    // [10] column 8 - 태그 픽
+    // [11] column 9 - 이벤트 목록
+    // + "SELECT * FROM Event WHERE DATE_SUB(NOW(), "
+    ;
+
+  connection.query(sql, function(err, query, fields){
+    if (err){
+      console.log("쿼리문에 오류가 있습니다.");
+      console.log(err);
+    }
+    obj = 
+    {
+      book_today: query[0],
+      readingbook_today: query[1],
+      weekly_writer: query[2],
+      user_read: query[3],
+      user_post: query[4],
+      book_month: query[5],
+      book_week: query[6],
+      book_year: query[7],
+      mili_original: query[8],
+    };
+    res.render('home',obj);
+  });
+});
+
+router.post('/', function(req, res, next){
+  connection.query(
+  );
 });
 /* GET search page. */
 router.get('/search', function(req, res, next) {
@@ -37,51 +160,14 @@ router.get('/search', function(req, res, next) {
 
 });
 
-/* GET management page. */
-router.get('/management', function(req, res, next) {
-  if(userID==-1) res.render('user/login');
-  res.render('management');
-});
 
-/* GET shelf page. */
-router.get('/shelf', function(req, res, next) {
-  if(userID==-1) res.render('user/login');
-  res.render('shelf');
-});
 
 /* GET book page. */
 router.get('/book', function(req, res, next) {
   res.render('book');
 });
 
-/* login page */
-router.get('/user/login', function(req, res, next) {
-  res.render('user/login');
-});
 
-
-/*login 확인 과정*/
-router.post('/user/login', function(req, res, next) {
-  var body = req.body;//email, password
-  connection.query("SELECT COUNT (user_index) as count FROM User WHERE ( email = '" + body.email + "' AND Password = '" + body.password +"' )",
-  function(err, result, fields){
-    if(err){
-      console.log("쿼리문에 오류가 있습니다.");
-      console.log(err);
-    }
-    else if(result && result[0].count ==1){
-      connection.query("SELECT *  FROM User WHERE  email = '" + body.email + "'",
-      function(err, result, fields){
-        
-        userID = result[0].user_index;
-        res.redirect("/");
-      }) 
-    }
-    else{
-      res.render('alert', {message : 'no such user'}); 
-    }
-  });
-});
 
 /* 회원가입 */
 router.get('/user/addUser', function(req, res, next) {

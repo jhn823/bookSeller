@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="kr">
 <head>
@@ -19,12 +20,12 @@
     <div>
         <center>
             <div class = "header">
-                <h2>나의 서재</h2>
+                <h2><%= user[0].libraryName %></h2>
                 <div class = "left">
-                    <p>성공한 여행가_34</p>
-                    <p>구독자 : 3 구독중 : 1</p>
+                    <p>필명 : <%= user[0].nickName %></p>
+                    <p>구독자 : <%= follower[0].count %> 구독중 : <%= following[0].count %> </p>
                     <p>공지사항은 여기다 나오게 하면 되겠죠?</p>
-                    <p>서재 설명은 여기다 나오게 하면 되겠쥬?</p>
+                    <p><%= user[0].libraryDescription %></p>
                 </div>
                 <table>
                     <tr>
@@ -33,9 +34,10 @@
                         <th>인용문</th>
                     </tr>
                     <tr>
-                        <th>3</th>
-                        <th>2</th>
-                        <th>8</th>
+                        <th><%= read[0].count %></th>
+                        <th><%= love[0].count %></th>
+                        <th><%= quotation[0].count %></th>
+                        
                     </tr>
                 </table>
             </div>
@@ -69,20 +71,39 @@
         </div>
         
         <div class ="post">
-            <h2>포스트</h2>
+            <h2>나의 포스트</h2>
             <div class ="column">
                 <table>
+                    <tr>
+                        <th>서평제목</th>
+                        <th>필명</th>
+                    </tr>
+                <% myposts.forEach(function(mypost) { %>
+                        <tr>
+                            <td><%= mypost.title %></td>
+                            <td><%= user[0].nickName %></td>
+                        </tr>                                  
+                    <% }) %>
+                    </table>
+            </div>
+        </div>     
+        <div class ="post">
+                <h2>구독중인 포스트</h2>
+                <div class ="column">
+                    <table>
                         <tr>
                             <th>서평제목</th>
                             <th>필명</th>
                         </tr>
-                        <tr>
-                            <td>현업적용 및 아이디어</td>
-                            <td>정직한 컨설턴트</td>
-                        </tr>
-                    </table>
-            </div>
-        </div>       
+                    <% followingPosts.forEach(function(followingPost) { %>
+                            <tr>
+                                <td><%= followingPost.title %></td>
+                                <td><%= followingPost.nickName %></td>
+                            </tr>                                  
+                        <% }) %>
+                        </table>
+                </div>
+            </div>        
     </center>
     </div>
 

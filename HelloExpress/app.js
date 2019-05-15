@@ -3,11 +3,29 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
 var indexRouter = require('./routes/index');
+var  managementRouter = require('./routes/management');
+var shelfRouter = require('./routes/shelf');
+var bookRouter = require('./routes/book');
+var bookTagRouter = require('./routes/bookTag');
 
 
 var app = express();
+var userID = -1;
+app.use(cookieParser());
+var session = require('express-session');
+exports.userID = userID;
+
+app.use(session({
+  key: 'sid', 
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
+  }
+}))
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,7 +38,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/management', managementRouter);
+app.use('/shelf', shelfRouter);
+app.use('/book', bookRouter);
+app.use('/bookTag', bookTagRouter);
 
+// app.use('/shelf', shelfRouter);
 
 
 // catch 404 and forward to error handler

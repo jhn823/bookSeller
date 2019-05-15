@@ -19,6 +19,7 @@
     <div>
         <center>
             <div class="book_info">
+            <form action="/book" method="POST">
             <table>
                 <tr>
                     <th rowspan="5">
@@ -26,35 +27,46 @@
                             <p>image</p>
                         </div>
                     </th>
-                    <th colspan="2">죽고싶지만 떡볶이는 먹고싶어</th>
+                    <th colspan="2"><%= book[0].title %></th>
                     <th></th>
                 </tr>
                 <tr>
                     <td>저자</td>
-                    <td>백세희</td>
+                    <td><%= book[0].writer %></td>
                 </tr>
                 <tr>
                     <td>출판사</td>
-                    <td>가나다라마</td>
+                    <td><%= book[0].publisher %></td>
                 </tr>
                 <tr>
-                    <td><p>❤️: 3</p></td>
+                    <td><p>❤️: <%= book[0].like_count %></p></td>
                     <td><button>❤️</button></td>
                 </tr>
+                
                 <tr>
                     <td>이 책이 담긴 서재</td>
-                    <td>111</td>
+                    <td><%= read_count[0].cnt %></td>
                 </tr>
                 </table>
+            </form>
             </div>
     
             <h2>감성 태그 픽</h2>
-            <div class ="column">
-                <div class = "tag">
-                    <p>#밤에읽기좋은</p>
-                </div>
-            </div>
-
+                <form action="/bookTag" method="POST">
+                <div class ="column">
+                    <div class = "tag">
+                        <% tag.forEach(function(tags) { %>
+                        <button name="tagId" value="<%= tags.book_tag_id %>">#<%= tags.content %></button>
+                        <button name="delTag" value="<%= tags.book_tag_id %>">X</button> 
+                        <% }) %>
+                    </div>
+                </div>  
+                <div class ="column">
+                    <div class = "tag">
+                        #<input type="text" name="new_tag" placeholder="이 책에 대한 나만의 #감성 태크를 달아주세요 " style="width:300px; padding:5px">
+                    </div>
+                </div>  
+                </form>                              
             <h2>이 저자, 역자의 다른 도서</h2>
             <div class ="column">
                 <div class = "list">
@@ -89,4 +101,3 @@
     </div>
 </body>
 </html>
-
