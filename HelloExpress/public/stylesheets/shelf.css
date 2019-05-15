@@ -41,6 +41,7 @@ a{
   border : 1px solid black;
   font-weight : bold;
   width : 80px;
+  overflow: hidden;
 }
 .tag {
   display : inline-block;

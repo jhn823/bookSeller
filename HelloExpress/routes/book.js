@@ -19,6 +19,8 @@ var userID = -1
 
 /* book page */
 router.get('/', function(req, res, next) {
+  console.log("what?");
+  var bookID = 34;
   sql = "SELECT * FROM Book WHERE book_id='" + bookID + "';"+
   "SELECT COUNT(book_read_id) AS cnt FROM Book_Read WHERE book_id='" + bookID + "';"+
   "SELECT * FROM Book_Tag WHERE book_id = "+String(bookID)+" AND is_deleted = 0;";
@@ -27,6 +29,7 @@ router.get('/', function(req, res, next) {
       console.log("쿼리문에 오류가 있습니다.");
       console.log(err);
     } 
+    console.log(query)
       obj = 
       {book: query[0],
         read_count: query[1],

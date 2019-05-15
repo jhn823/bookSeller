@@ -43,53 +43,63 @@
             </div>
             <!--버튼으로 눌려서 페이지 바꾸는게 어려워서 그냥 하나에 쭉 나열하도록 할게요-->
             <div class ="books">
-                <h2>도서</h2>
+                <h2>대여중인 도서👏</h2>
                 <div class ="column">
+                    <% borrowings.forEach(function(book) { %>
                     <div class = "list">
-                        <p>한강</p>
-                        <p>소년이 온다</p>
+                            <p><%= book.writer %></p>
+                            <p><%= book.title %></p>
                     </div>
+                <% }) %>
                 </div>
             </div>
 
         <div class="shelf">
-            <h2>서재</h2>
+            <h2>📕서재📚</h2>
+            <% category.forEach(function(cate) { %>
             <div class ="column">
-                <h3 class = "left">첫번째 서재이름</h3>
-                <div class = "list">
-                    <p>한강</p>
-                    <p>소년이 온다</p>
+                    <% count =0 %>
+                    <% categorized.forEach(function(book) { %>
+                        <% if(count==0){ %> 
+                            <h3><%= cate.bookshelf_title %></h3>
+                        <% count++ }%>
+
+                        <% if(cate.bookshelf_title == book.bookshelf_title) { %> 
+                        <div class = "list">
+                                <p><%= book.writer %></p>
+                                <p><%= book.title %></p>
+                        </div>
+                    <% } %>
+                <% }) %>
                 </div>
-            </div>
-            <div class ="column">
-                <h3 class = "left">두번째 서재이름</h3>
-                <div class = "list">
-                    <p>한강</p>
-                    <p>소년이 온다</p>
-                </div>
-            </div>
-        </div>
-        
+                <% }) %>
+
         <div class ="post">
-            <h2>나의 포스트</h2>
+            <h2>✏️나의 포스트🗒</h2>
+            <p><a>추가✏️</a></p>
             <div class ="column">
                 <table>
                     <tr>
                         <th>서평제목</th>
                         <th>필명</th>
+                        <th colspan ="2">관리</th>
                     </tr>
                 <% myposts.forEach(function(mypost) { %>
                     <% link = "http://localhost:3000/shelf/post?pid=" + mypost.post_id+ "&uid=" +user[0].user_index %>
+                    <% dlink = "http://localhost:3000/shelf/post/delete?pid=" + mypost.post_id+ "&uid=" +user[0].user_index %>
+
                         <tr>
                             <td><a href = <%=link %>><%= mypost.title %></a></td>
                             <td><a href = <%=link %>><%= user[0].nickName %></a></td>
+                            <td><a>수정</a></td>
+                            <td><a href = <%=dlink %>>삭제</a></td>
                         </tr>                                  
                     <% }) %>
                     </table>
             </div>
         </div>     
         <div class ="post">
-                <h2>구독중인 포스트</h2>
+                <h2>✏️구독중인 포스트🗒</h2>
                 <div class ="column">
                     <table>
                         <tr>

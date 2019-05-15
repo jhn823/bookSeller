@@ -27,25 +27,25 @@
                             <p>image</p>
                         </div>
                     </th>
-                    <th colspan="2"><%= book[0].title %></th>
+                    <th colspan="2"><%= book.title %></th>
                     <th></th>
                 </tr>
                 <tr>
                     <td>저자</td>
-                    <td><%= book[0].writer %></td>
+                    <td><%= book.writer %></td>
                 </tr>
                 <tr>
                     <td>출판사</td>
-                    <td><%= book[0].publisher %></td>
+                    <td><%= book.publisher %></td>
                 </tr>
                 <tr>
-                    <td><p>❤️: <%= book[0].like_count %></p></td>
+                    <td><p>❤️: <%= book.like_count %></p></td>
                     <td><button>❤️</button></td>
                 </tr>
                 
                 <tr>
                     <td>이 책이 담긴 서재</td>
-                    <td><%= read_count[0].cnt %></td>
+                    <td><%= read_count.cnt %></td>
                 </tr>
                 </table>
             </form>

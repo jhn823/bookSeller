@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/home.css' />
+    <title>밀리의 서재</title>
+</head>
+<body> 
+    <div class = "main_menu">
+        <center>
+            <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
+            </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
+            </h2> <h2 id ="menu"><a href ="http://localhost:3000/shelf">내 서재</a></h2>
+            <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
+        </center>
+    </div>
+    
+    <hr />
+    <div>
+        <center>
+            <h1>POST</h1>
+            <p><%= writer[0].nickName %></p>
+            <h3><%= post[0].title %></h3>
+            <div>
+                <p><%= post[0].contents %></p>
+            </div>
+        </center>
+    </div>
+
+</body>
+</html>

@@ -40,7 +40,17 @@ router.get('/', function(req, res, next) {
       //[6]읽은 책 수
       "SELECT COUNT (book_read_id) as count FROM Book_Read WHERE return_date is not NULL AND '" + userID + "' = user_index;"+
       //[7]인용문 수
-      "SELECT COUNT (quotation_id) as count FROM Quotation WHERE '" + userID + "' = user_index;";
+      "SELECT COUNT (quotation_id) as count FROM Quotation WHERE '" + userID + "' = user_index;"+
+      //[8]내가 좋아한 책
+      //"SELECT * FROM Book INNER JOIN Love ON Love.book_id = Book.book_id WHERE '" + userID + "' = user_index AND  '" + 1 + "' = love_status;"
+      //[8]대여중인 도서
+      "SELECT * FROM Book_Read INNER JOIN Book ON Book_Read.book_id = Book.book_id  WHERE return_date is NULL AND '" + userID + "' = user_index;"+
+      //[9]카테고리 수
+      "SELECT DISTINCT bookshelf_title FROM Bookshelf WHERE '" + userID + "' = user_index;"+
+      //[10]카테고리 별 도서
+      "SELECT * FROM Bookshelf INNER JOIN Book ON Bookshelf.book_id = Book.book_id WHERE '" + userID + "' = user_index;";
+
+   
 
 
     console.log("shelf sql : " +sql);
@@ -57,9 +67,11 @@ router.get('/', function(req, res, next) {
           love : result[5],
           read: result[6],
           quotation: result[7],
+          borrowings : result[8],
+          category : result[9],
+          categorized : result[10]
 
         };
-        console.log(result[3]); 
         res.render('shelf',obj);
       }
     })
@@ -89,6 +101,22 @@ router.get('/post', function(req, res, next) {
         res.render('shelf/post',obj);
       }
     });
+
+});
+
+/* GET shelf/post/delete page. */
+router.get('/post/delete', function(req, res, next) {
+
+  userID = req.session.userID;
+  var pid =  req.param("pid");
+  var uid =  req.param("uid");
+  sql = "DELETE FROM Post WHERE '" + pid + "' = post_id;"
+  connection.query(sql, function(err, result, fields){
+    if (err) throw err;
+    else {
+      res.redirect('/shelf');
+    }
+  });
 
 });
 

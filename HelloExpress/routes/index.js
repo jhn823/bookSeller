@@ -167,12 +167,6 @@ router.get('/search', function(req, res, next) {
 
 
 
-/* GET book page. */
-router.get('/book', function(req, res, next) {
-  res.render('book');
-});
-
-
 
 /* 회원가입 */
 router.get('/user/addUser', function(req, res, next) {
