@@ -41,7 +41,8 @@ a{
   border : 1px solid black;
   font-weight : bold;
   width : 80px;
-  overflow: hidden;
+  overflow: auto;
+  background-color :#F09696;
 }
 .tag {
   display : inline-block;

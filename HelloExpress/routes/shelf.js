@@ -120,6 +120,54 @@ router.get('/post/delete', function(req, res, next) {
 
 });
 
+/* GET shelf/post/delete page. */
+router.get('/post/setpost', function(req, res, next) {
+  userID = req.session.userID;
+  var pid =  req.param("pid");
+
+  if(pid==-1){
+    obj = {info : [{pid : -1}]}
+    res.render('shelf/setpost', obj);
+  }else{
+    sql = "SELECT *  FROM Post WHERE '" + pid + "' = post_id;"
+    connection.query(sql, function(err, result, fields){
+      if (err) throw err;
+      else {
+        obj = {
+          info : result}
+          res.render('shelf/setpost', obj);
+      }
+    });
+
+  }
+
+ 
+
+});
+
+router.post('/post/setpost', function(req, res, next) {
+  var body = req.body;
+
+  userID = req.session.userID;
+  var pid =  req.param("pid");
+  res.render('shelf/setpost');
+  if(pid==-1){
+    connection.query("INSERT INTO Post (user_index, title,contents) VALUES (?,?,?)", [
+      userID, body.title, body.contents
+    ]);
+  }else{
+    sql = "UPDATE Post SET title = '" + body.title+"', contents = '"+ body.contents +"' WHERE '" + pid + "' = post_id;"
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log(result.affectedRows + " record(s) updated");
+    });
+  }
+
+  res.redirect('/shelf');
+
+
+});
+
 
 
 module.exports = router;

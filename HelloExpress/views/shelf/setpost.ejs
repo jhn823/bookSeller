@@ -18,12 +18,18 @@
     <hr />
     <div>
         <center>
-            <h1>POST</h1>
-            <p><%= writer[0].nickName %></p>
-            <h3><%= post[0].title %></h3>
-            <div>
-                <p><%= post[0].contents %></p>
-            </div>
+            <h1>post 작성</h1>
+            <hr>
+            <% link = "http://localhost:3000/shelf/post/setpost?pid=" + info[0].pid %>
+            <form action=<%= link %> method="POST">
+                <table>
+                    <tr>
+                        <td><input type="text" name="title" placeholder="제목"></td>
+                        <td><input type="text" name="contents" placeholder="글 내용"></td>
+                    </tr>
+                </table>
+                <input type="submit" value="확인">
+            </form>
         </center>
     </div>
 
