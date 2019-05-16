@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/home.css' />
+    <title>도비의 서재</title>
+    <center><h1 class="header">도비의 서재</h1></center>
+</head>
+<body> 
+    <div class = "main_menu">
+            <center>
+                <% slink = "http://localhost:3000/shelf?sid=" + -1 %>
+                <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
+                </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
+                </h2> <h2 id ="menu"><a href =<%= slink %>>내 서재</a></h2>
+                <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
+            </center>
+    </div>
+    
+    <hr />
+    <div>
+        <center>
+            <h2>서재관리</h2>
+            <div class ="column">
+                <table>
+                    <tr>
+                        <td>
+                            <% category_count.forEach(function(category) { %>
+                                <% parsed = category.bookshelf_title.replace(/ /g, '+'); console.log(parsed) %>
+                                <% mlink = "http://localhost:3000/shelf/libManage/modify?cname=" + parsed  %>
+                                <% dlink = "http://localhost:3000/shelf/libManage/delete?cname=" +  parsed  %>
+                                <tr>
+                                    <td><%= category.bookshelf_title %> (<%= category.count %>권)</td>
+                                    <td><a href =<%= mlink %>>수정</a></td>
+                                    <td><a href =<%= dlink %>>삭제</a></td>
+                                </tr>
+                                <% }) %>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+    </center>
+    </div>
+
+
+    <!-- <button><a href = "http://localhost:3000/user/login">로그인하기</a></button>
+    <button><a href = "http://localhost:3000/user/addUser">회원 가입</a></button>
+    <button><a href = "http://localhost:3000/management/list">관리</a></button> -->
+</body>
+</html>

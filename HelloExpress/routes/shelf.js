@@ -128,6 +128,29 @@ router.get('/post/delete', function(req, res, next) {
 
 });
 
+/* GET shelf/post/setpost */
+router.get('/post/setpost', function(req, res, next) {
+  //ownerID = req.session.ownerID;
+  var pid =  req.param("pid");
+
+  if(pid==-1){
+    obj = {info : [{pid : -1}]}
+    res.render('shelf/setpost', obj);
+  }else{
+    sql = "SELECT *  FROM Post WHERE '" + pid + "' = post_id;"
+    connection.query(sql, function(err, result, fields){
+      if (err) throw err;
+      else {
+      console.log(result)
+        obj = {
+          info : result}
+          res.render('shelf/setpost', obj);
+      }
+    });
+
+  }
+});
+
 /* GET shelf/post/delete page. */
 router.get('/post/setpost', function(req, res, next) {
   //ownerID = req.session.ownerID;
@@ -149,10 +172,8 @@ router.get('/post/setpost', function(req, res, next) {
     });
 
   }
-
- 
-
 });
+
 
 router.post('/post/setpost', function(req, res, next) {
   var body = req.body;
@@ -174,6 +195,69 @@ router.post('/post/setpost', function(req, res, next) {
   res.redirect('/shelf');
 });
 
+
+
+/* GET shelf/libManage page. */
+router.get('/libManage', function(req, res, next) {
+  var category;
+  var category_count;
+
+
+  if(!req.session.userID) res.redirect('../user/login');
+  else{
+    sql = "SELECT COUNT(book_id) as count, bookshelf_title, bookshelf_id as id FROM Bookshelf WHERE '" + ownerID + "' = Bookshelf.user_index GROUP BY bookshelf_title;";
+    connection.query(sql, function(err, result, fields){
+      if (err) throw err;
+      else {
+            obj = {
+              category_count : result
+            }
+            console.log(obj)
+            res.render('shelf/library/libManage', obj);
+          }
+
+      });
+  }
+
+});
+
+/* GET shelf/libManage page. */
+router.get('/libManage/modify', function(req, res, next) {
+
+  if(!req.session.userID) res.redirect('../user/login');
+  else{
+    sql = "SELECT COUNT(book_id) as count, bookshelf_title, bookshelf_id as id FROM Bookshelf WHERE '" + ownerID + "' = Bookshelf.user_index GROUP BY bookshelf_title;";
+    connection.query(sql, function(err, result, fields){
+      if (err) throw err;
+      else {
+            obj = {
+              category_count : result
+            }
+            console.log(obj)
+            res.render('shelf/library/libManage', obj);
+          }
+
+      });
+  }
+
+});
+
+/* DELETE category shelf/libManage/delete page. */
+router.get('/libManage/delete', function(req, res, next) {
+  // = req.session.ownerID;
+  var cname =  decodeURIComponent(req.param("cname"));
+
+  sql = "DELETE FROM Bookshelf WHERE '" + cname + "' = bookshelf_title;"
+  connection.query(sql, function(err, result, fields){
+    if (err) throw err;
+    else {
+      console.log("Affect : " + result.affectedRows);
+      res.redirect('/shelf/libManage');
+    }
+  });
+
+
+});
 
 
 module.exports = router;

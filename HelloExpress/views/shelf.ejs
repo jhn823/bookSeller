@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel='stylesheet' href='/stylesheets/shelf.css' />
-    <title>밀리의 서재</title>
+    <title>도비의 서재</title>
 </head>
 <body> 
     <div class = "main_menu">
@@ -58,6 +58,9 @@
 
         <div class="shelf">
             <h2>📕서재📚</h2>
+            <% if(mine.value==1){ %>
+                <p><a href ="http://localhost:3000/shelf/libManage">서재관리🕶</a></p>
+            <% } %>
             <% category.forEach(function(cate) { %>
             <div class ="column">
                     <% count =0 %>
