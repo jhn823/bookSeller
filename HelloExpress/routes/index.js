@@ -216,9 +216,6 @@ router.post('/user/addUser', function(req, res, next) {
 
 
 
-
-
-
 router.get('/index', function(req, res, next) {
   connection.query("SELECT * FROM book;", function(err, books, fields){
     connection.query("SELECT * FROM book;", function(err, counts, fields){
