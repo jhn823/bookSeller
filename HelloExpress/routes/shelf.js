@@ -53,11 +53,9 @@ router.get('/', function(req, res, next) {
    
 
 
-    console.log("shelf sql : " +sql);
     connection.query(sql,function(err, result, fields){
       if (err) throw err;
       else{
-        console.log(result);
           obj = 
         { user: result[0],
           follower: result[1],
@@ -133,6 +131,7 @@ router.get('/post/setpost', function(req, res, next) {
     connection.query(sql, function(err, result, fields){
       if (err) throw err;
       else {
+      console.log(result)
         obj = {
           info : result}
           res.render('shelf/setpost', obj);
@@ -162,10 +161,7 @@ router.post('/post/setpost', function(req, res, next) {
       console.log(result.affectedRows + " record(s) updated");
     });
   }
-
   res.redirect('/shelf');
-
-
 });
 
 

@@ -46,8 +46,9 @@
                 <h2>대여중인 도서👏</h2>
                 <div class ="column">
                     <% borrowings.forEach(function(book) { %>
+                        <% link = "http://localhost:3000/book?bid=" + book.book_id %>
                     <div class = "list">
-                            <p><%= book.writer %></p>
+                            <p><a href=<%= link %>><%= book.writer %></a></p>
                             <p><%= book.title %></p>
                     </div>
                 <% }) %>
@@ -65,8 +66,10 @@
                         <% count++ }%>
 
                         <% if(cate.bookshelf_title == book.bookshelf_title) { %> 
+                        <% link = "http://localhost:3000/book?bid=" + book.book_id %>
+
                         <div class = "list">
-                                <p><%= book.writer %></p>
+                                <p><a href=<%= link %>><%= book.writer %></a></p>
                                 <p><%= book.title %></p>
                         </div>
                     <% } %>
@@ -88,11 +91,12 @@
                 <% myposts.forEach(function(mypost) { %>
                     <% link = "http://localhost:3000/shelf/post?pid=" + mypost.post_id+ "&uid=" +user[0].user_index %>
                     <% dlink = "http://localhost:3000/shelf/post/delete?pid=" + mypost.post_id+ "&uid=" +user[0].user_index %>
-
+                    <% setpostlink = "http://localhost:3000/shelf/post/setpost?pid=" + mypost.post_id %>
+                    
                         <tr>
                             <td><a href = <%=link %>><%= mypost.title %></a></td>
                             <td><a href = <%=link %>><%= user[0].nickName %></a></td>
-                            <td><a>수정</a></td>
+                            <td><a href=<%= setpostlink %>>수정</a></td>
                             <td><a href = <%=dlink %>>삭제</a></td>
                         </tr>                                  
                     <% }) %>
