@@ -93,7 +93,8 @@
                 </tr>
                 <td>
                         <% weekly_writer.forEach(function(weekly_writer) { %>
-                            <tr><td><%= weekly_writer.title %></td>
+                            <% link = "http://localhost:3000/shelf/post?pid=" + weekly_writer.post_id + "&uid=1" %>
+                            <tr><td><a href = <%=link %>><%= weekly_writer.title %></a></td>
                             <td><%= weekly_writer.datetime.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td></tr>
                             <% }) %>
                     </td>
@@ -141,7 +142,8 @@
             <tr>
                 <td>
                     <% book_month.forEach(function(book_month) { %>
-                        <tr><td><%= book_month.title %></td>
+                        <% link = "http://localhost:3000/book?bid="+ book_month.book_id %>
+                        <tr><td><a href = <%=link %>><%= book_month.title %></a></td>
                         <td><%= book_month.writer %></td>
                         <td><%= book_month.publisher %></td></tr>
                         <% }) %>
@@ -162,7 +164,8 @@
                 <tr>
                         <td>
                             <% book_week.forEach(function(book_week) { %>
-                                <tr><td><%= book_week.title %></td>
+                                <% link = "http://localhost:3000/book?bid="+ book_week.book_id %>
+                                <tr><td><a href = <%=link %>><%= book_week.title %></a></td>
                                 <td><%= book_week.writer %></td>
                                 <td><%= book_week.publisher %></td></tr>
                                 <% }) %>
@@ -184,7 +187,8 @@
                 <tr>
                     <td>
                         <% book_year.forEach(function(book_year) { %>
-                            <tr><td><%= book_year.title %></td>
+                            <% link = "http://localhost:3000/book?bid="+ book_year.book_id %>
+                            <tr><td><a href = <%=link %>><%= book_year.title %></a></td>
                             <td><%= book_year.writer %></td>
                             <td><%= book_year.publisher %></td></tr>
                             <% }) %>
@@ -202,7 +206,8 @@
                     <tr>
                         <td>
                             <% mili_original.forEach(function(mili_original) { %>
-                                <tr><td><%= mili_original.title %></td>
+                                <% link = "http://localhost:3000/book?bid="+ mili_original.book_id %>
+                                <tr><a href = <%=link %>><%= mili_original.title %></a></td>
                                 <td><%= mili_original.writer %></td>
                                 <% }) %>
                         </td>
@@ -212,15 +217,18 @@
         <h2>감성 태그 픽</h2>
         <div class ="column">
             <div class = "tag">
-                <p>#밤에읽기좋은</p>
+                    <% tag_pick.forEach(function(tag_pick) { %>
+                <p>#<%= tag_pick.content %></p>
+                <% }) %>
             </div>
         </div>
         <h2>진행중인 이벤트</h2>
         <div class ="column">
             <table>
                 <% event.forEach(function(event) { %>
+                    <% link = "http://localhost:3000/event?eid="+ event.event_id %>
                 <tr>
-                    <th><%= event.title %></th>
+                    <th><a href = <%=link %>><%= event.title %></a></th>
                 </tr>
                 <tr>
                     <td><%= event.to_date.toISOString().replace(/T/, ' ').replace(/\..+/, '')%> 까지</td>
