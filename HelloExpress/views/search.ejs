@@ -8,11 +8,12 @@
 <body> 
     <div class = "main_menu">
             <center>
-                <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
-                </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
-            </h2> <h2 id ="menu"><a href ="http://localhost:3000/shelf">내 서재</a></h2>
-                <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
-            </center>
+                    <% slink = "http://localhost:3000/shelf?sid=" + -1 %>
+                    <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
+                    </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
+                    </h2> <h2 id ="menu"><a href =<%= slink %>>내 서재</a></h2>
+                    <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
+                </center>
     </div>
     <hr />
     <div>
