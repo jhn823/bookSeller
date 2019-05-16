@@ -117,6 +117,9 @@ router.get('/', function(req, res, next) {
     // [9] column 7 -밀리 오리지널
     + "SELECT * FROM Book WHERE publisher = '밀리의서재';"
     // [10] column 8 - 태그 픽
+    + "SELECT Book_Tag.content, count(*) AS num\
+        FROM Book_Tag \
+        GROUP BY content ORDER BY count(*) DESC LIMIT 5;"
     // [11] column 9 - 이벤트 목록
     + "SELECT * FROM Event WHERE to_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 100 MONTH)"
     ;
@@ -138,7 +141,8 @@ router.get('/', function(req, res, next) {
       book_week: query[7],
       book_year: query[8],
       mili_original: query[9],
-      event: query[10]
+      tag_pick: query[10],
+      event: query[11]
     };
     res.render('home',obj);
   });
@@ -148,6 +152,7 @@ router.post('/', function(req, res, next){
   connection.query(
   );
 });
+
 /* GET search page. */
 router.get('/search', function(req, res, next) {
   var q =  req.param("q");
@@ -353,6 +358,28 @@ router.get('/management/subscribe/history', function(req, res, next) {
   });
 });
 
+/*GET event page*/
+router.get('/event', function(req, res, next) {
+  if(!req.session.userID) res.redirect('user/login');
+  else{
+    userID = req.session.userID;
+    var eid=req.param("eid");
+
+    sql = 
+    "SELECT * FROM Event WHERE '"+eid+"'=event_id;"
+    ;
+    connection.query(sql, function(err, query, fields){
+      if (err) throw err;
+      else{
+        console.log(query);
+        obs = {
+          event: query[0]
+        }
+        res.render('event',obj);
+      }
+    });
+  }
+});
 
 // /*관리->구독관리->구독취소*/
 // router.get('/management/subscribe/autopay', function(req, res, next) {

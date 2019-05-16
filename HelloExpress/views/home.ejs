@@ -212,15 +212,18 @@
         <h2>감성 태그 픽</h2>
         <div class ="column">
             <div class = "tag">
-                <p>#밤에읽기좋은</p>
+                    <% tag_pick.forEach(function(tag_pick) { %>
+                <p>#<%= tag_pick.content %></p>
+                <% }) %>
             </div>
         </div>
         <h2>진행중인 이벤트</h2>
         <div class ="column">
             <table>
                 <% event.forEach(function(event) { %>
+                    <% link = "http://localhost:3000/event?eid="+ event.event_id %>
                 <tr>
-                    <th><%= event.title %></th>
+                    <th><a href = <%=link %>><%= event.title %></a></th>
                 </tr>
                 <tr>
                     <td><%= event.to_date.toISOString().replace(/T/, ' ').replace(/\..+/, '')%> 까지</td>
