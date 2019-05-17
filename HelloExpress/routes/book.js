@@ -15,13 +15,16 @@ var connection = mysql.createConnection({
 
 var obj = {};
 
-var userID =4;
-var bookID =34;
+var userID ;
+var bookID ;
 
 /* book page */
 router.get('/', function(req, res, next) {
-  //userID = req.session.userID;
-  //bookID = req.param("bid");
+  userID = req.session.userID;
+  bookID = req.param("bid");
+  console.log("get------------");
+  console.log(userID);
+  console.log(bookID);
   sql = 
   //book 정보 -query[0]
   "SELECT * FROM Book WHERE book_id='" + bookID + "';"+
@@ -81,17 +84,12 @@ router.post('/', function(req, res, next) {
   var tag_ID = req.body.tagID;
   var del_tagID = req.body.delTag;
   var query;
-  /*
-  console.log("love_tagID----");
-  console.log(tag_ID);
-  console.log("From del Tag----");
-  console.log(del_tagID);
-  console.log("From newTag----");
-  console.log(new_tag);
-  console.log("=======love_book========");
-  console.log(love==='1');
-  console.log(love);
-  */
+  userID = req.session.userID;
+  bookID = req.param("bid");
+  console.log("post------------");
+  console.log(bookID);
+  console.log(userID);
+
   //책 좋아요
   if(love==='1'){
   connection.query("SELECT * FROM Love WHERE type='book' AND book_id=" + String(bookID) + " AND user_index=" + String(userID),
@@ -112,7 +110,7 @@ router.post('/', function(req, res, next) {
         connection.query(sql,
       function(err, result, fields){
         console.log(err, result);
-        res.redirect("/book");
+        res.redirect("/book?bid="+String(bookID));
       }) 
     }
     else{
@@ -120,7 +118,7 @@ router.post('/', function(req, res, next) {
       sql = "INSERT INTO Love (`type`, `user_index`, `book_id`) VALUES ('book', "+String(userID)+", "+String(bookID)+");UPDATE Book Set like_count = like_count + 1 WHERE book_id = "+String(bookID);
       connection.query(sql,
       function(err, result, fields){
-        res.redirect("/book");
+        res.redirect("/book?bid="+String(bookID));
       })
       console.log(err, sql);
     }
@@ -143,11 +141,11 @@ router.post('/', function(req, res, next) {
             console.log("new_tag 쿼리문에 오류가 있습니다.");
             console.log(err);
           }
-          else{
-          res.redirect("/book");
-          }
+          //res.redirect("/book?bid="+String(bookID));
+          res.redirect("/book?bid="+String(bookID));
         }); 
       }
+
     });
   }
   if(tag_ID > 0 && new_tag===''){
@@ -170,7 +168,7 @@ router.post('/', function(req, res, next) {
             function(err, result, fields){
               console.log("태그 좋아요 취소 connet");
               console.log(err, result);
-              res.redirect("/book");
+              res.redirect("/book?bid="+String(bookID));
             })  
         }
         else{ // 좋아요로 toggle 
@@ -188,7 +186,7 @@ router.post('/', function(req, res, next) {
                 function(err, result, fields){
                   console.log("태그 좋아요 connet");
                   console.log(err, result);
-                  res.redirect("/book");
+                  res.redirect("/book?bid="+String(bookID));
                 })   
             }
           });
@@ -208,7 +206,7 @@ router.post('/', function(req, res, next) {
             connection.query(sql,
             function(err, result, fields){
               console.log(err,result);
-              res.redirect("/book");
+              res.redirect("/book?bid="+String(bookID));
             })
           }
         });
@@ -227,7 +225,7 @@ router.post('/', function(req, res, next) {
         console.log("del_tagID 쿼리에 문제가 있습니다.");
         console.log(err);
       }
-      res.redirect("/book");
+      res.redirect("/book?bid="+String(bookID));
     });
   }
 });
