@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel='stylesheet' href='/stylesheets/home.css' />
-    <title>밀리의 서재</title>
+    <title>도비의 서재</title>
 </head>
 <body> 
     <div class = "main_menu">
@@ -20,13 +20,25 @@
         <center>
             <h1>post 작성</h1>
             <hr>
-            <% link = "http://localhost:3000/shelf/post/setpost?pid=" + info[0].pid %>
-            <form action=<%= link %> method="POST">
+            <% link = "http://localhost:3000/shelf/post/setpost?pid=" + info[0].post_id %>
+            <% pid = info[0].post_id %>
+            <form action=<%= link %> method="POST" >
                 <table>
+                    <% if(pid==-1){%>
                     <tr>
                         <td><input type="text" name="title" placeholder="제목"></td>
-                        <td><input type="text" name="contents" placeholder="글 내용"></td>
                     </tr>
+                    <tr>
+                        <td><textarea name="contents"></textarea></td>
+                    </tr>
+                    <% }else{ %>
+                    <tr>
+                            <td><textarea name="title"><%= info[0].title %></textarea></td>
+                    </tr>
+                    <tr>
+                        <td><textarea name="contents"><%= info[0].contents %></textarea></td>
+                    </tr>
+                    <% } %>
                 </table>
                 <input type="submit" value="확인">
             </form>

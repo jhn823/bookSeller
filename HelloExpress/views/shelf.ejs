@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <link rel='stylesheet' href='/stylesheets/shelf.css' />
-    <title>밀리의 서재</title>
+    <title>도비의 서재</title>
 </head>
 <body> 
     <div class = "main_menu">
         <center>
+            <% slink = "http://localhost:3000/shelf?sid=" + -1 %>
             <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
             </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
-            </h2> <h2 id ="menu"><a href ="http://localhost:3000/shelf">내 서재</a></h2>
+            </h2> <h2 id ="menu"><a href =<%= slink %>>내 서재</a></h2>
             <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
         </center>
     </div>
@@ -46,9 +47,10 @@
                 <h2>대여중인 도서👏</h2>
                 <div class ="column">
                     <% borrowings.forEach(function(book) { %>
+                        <% link = "http://localhost:3000/book?bid=" + book.book_id %>
                     <div class = "list">
+                            <p><a href=<%= link %>><%= book.title %></a></p>
                             <p><%= book.writer %></p>
-                            <p><%= book.title %></p>
                     </div>
                 <% }) %>
                 </div>
@@ -56,6 +58,9 @@
 
         <div class="shelf">
             <h2>📕서재📚</h2>
+            <% if(mine.value==1){ %>
+                <p><a href ="http://localhost:3000/shelf/libManage">서재관리🕶</a></p>
+            <% } %>
             <% category.forEach(function(cate) { %>
             <div class ="column">
                     <% count =0 %>
@@ -65,9 +70,11 @@
                         <% count++ }%>
 
                         <% if(cate.bookshelf_title == book.bookshelf_title) { %> 
+                        <% link = "http://localhost:3000/book?bid=" + book.book_id %>
+
                         <div class = "list">
+                                <p><a href=<%= link %>><%= book.title %></a></p>
                                 <p><%= book.writer %></p>
-                                <p><%= book.title %></p>
                         </div>
                     <% } %>
                 <% }) %>
@@ -75,25 +82,27 @@
                 <% }) %>
 
         <div class ="post">
-            <h2>✏️나의 포스트🗒</h2>
+            <h2>✏️작성한 포스트🗒</h2>
             <% setpostlink = "http://localhost:3000/shelf/post/setpost?pid=-1" %>
             <p><a href=<%= setpostlink %>>추가✏️</a></p>
             <div class ="column">
                 <table>
                     <tr>
                         <th>서평제목</th>
-                        <th>필명</th>
-                        <th colspan ="2">관리</th>
+                        <% if(mine.value==1){ %>
+                            <th colspan ="2">관리</th>
+                        <% } %>
                     </tr>
                 <% myposts.forEach(function(mypost) { %>
                     <% link = "http://localhost:3000/shelf/post?pid=" + mypost.post_id+ "&uid=" +user[0].user_index %>
                     <% dlink = "http://localhost:3000/shelf/post/delete?pid=" + mypost.post_id+ "&uid=" +user[0].user_index %>
-
+                    <% setpostlink = "http://localhost:3000/shelf/post/setpost?pid=" + mypost.post_id %>
                         <tr>
                             <td><a href = <%=link %>><%= mypost.title %></a></td>
-                            <td><a href = <%=link %>><%= user[0].nickName %></a></td>
-                            <td><a>수정</a></td>
-                            <td><a href = <%=dlink %>>삭제</a></td>
+                            <% if(mine.value==1){ %>
+                                <td><a href=<%= setpostlink %>>수정</a></td>
+                                <td><a href = <%=dlink %>>삭제</a></td>
+                            <% } %>
                         </tr>                                  
                     <% }) %>
                     </table>
@@ -109,9 +118,10 @@
                         </tr>
                     <% followingPosts.forEach(function(followingPost) { %>
                         <% link = "http://localhost:3000/shelf/post?pid=" + followingPost.post_id + "&uid=" +followingPost.user_index %>
+                        <% slink ="http://localhost:3000/shelf?sid=" + followingPost.user_index %>
                             <tr>
                                 <td><a href = <%=link %>> <%= followingPost.title %></a></td>
-                                <td> <a href = <%=link %>> <%= followingPost.nickName %></a></td>
+                                <td> <a href = <%=slink %>> <%= followingPost.nickName %></a></td>
                             </tr>                                  
                         <% }) %>
                         </table>
