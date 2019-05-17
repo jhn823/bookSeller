@@ -27,40 +27,61 @@
                             <p>image</p>
                         </div>
                     </th>
-                    <th colspan="2"><%= book.title %></th>
+                    <th colspan="2"><%= book[0].title %></th>
                     <th></th>
                 </tr>
                 <tr>
                     <td>저자</td>
-                    <td><%= book.writer %></td>
+                    <td><%= book[0].writer %></td>
                 </tr>
                 <tr>
                     <td>출판사</td>
-                    <td><%= book.publisher %></td>
+                    <td><%= book[0].publisher %></td>
                 </tr>
                 <tr>
-                    <td><p>❤️: <%= book.like_count %></p></td>
-                    <td><button>❤️</button></td>
+                    <td><p>❤️: <%= book[0].like_count %></p></td>
+                    <td><button name="love" value="1">❤️</button></td>
                 </tr>
                 
                 <tr>
                     <td>이 책이 담긴 서재</td>
-                    <td><%= read_count.cnt %></td>
+                    <td><%= read_count[0].cnt %></td>
                 </tr>
                 </table>
             </form>
             </div>
     
-            <h2>감성 태그 픽</h2>
-                <form action="/bookTag" method="POST">
+                <h2>감성 태그 픽</h2>
+                <form action="/book" method="POST">
+                
                 <div class ="column">
                     <div class = "tag">
                         <% tag.forEach(function(tags) { %>
-                        <button name="tagId" value="<%= tags.book_tag_id %>">#<%= tags.content %></button>
-                        <button name="delTag" value="<%= tags.book_tag_id %>">X</button> 
+                        <button name="tagID" value="<%= tags.book_tag_id %>">#<%= tags.content %></button>
                         <% }) %>
                     </div>
                 </div>  
+                <h4>나의 관심 태그</h4>
+                <div class ="column">
+                        <div class = "tag">
+                            <% love_tags.forEach(function(love_tag) { %>
+                            <button name="tagID" value="<%= love_tag.book_tag_id %>">#<%= love_tag.content %></button>
+                            <% }) %>
+                        </div>
+
+                    </div>
+                <h4>내가 작성한 태그</h4>
+                <div class ="column">
+                        <div class = "tag">
+                            <% my_tags.forEach(function(my_tag) { %>
+                            <button name="tagID" value="<%= my_tag.book_tag_id %>">#<%= my_tag.content %></button>
+                            <button name="delTag" value="<%= my_tag.book_tag_id %>">X</button></br>
+                            <% }) %>
+                        </div>
+
+                    </div>    
+
+                <!--create new tag-->
                 <div class ="column">
                     <div class = "tag">
                         #<input type="text" name="new_tag" placeholder="이 책에 대한 나만의 #감성 태크를 달아주세요 " style="width:300px; padding:5px">
