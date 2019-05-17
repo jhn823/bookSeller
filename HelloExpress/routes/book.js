@@ -15,13 +15,13 @@ var connection = mysql.createConnection({
 
 var obj = {};
 
-var userID =4;
-var bookID =34;
+var userID ;
+var bookID ;
 
 /* book page */
 router.get('/', function(req, res, next) {
-  //userID = req.session.userID;
-  //bookID = req.param("bid");
+  userID = req.session.userID;
+  bookID = req.param("bid");
   sql = 
   //book 정보 -query[0]
   "SELECT * FROM Book WHERE book_id='" + bookID + "';"+
