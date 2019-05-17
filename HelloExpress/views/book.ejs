@@ -19,7 +19,8 @@
     <div>
         <center>
             <div class="book_info">
-            <form action="/book" method="POST">
+            <% link = "http://localhost:3000/book?bid=" + book[0].book_id %>
+            <form action=<%= link %> method="POST" >
             <table>
                 <tr>
                     <th rowspan="5">
@@ -49,11 +50,11 @@
                     <td><button style="width:30px;"><a href = <%=link %>><%= read_count[0].cnt %></a></button></td>
                 </tr>
                 </table>
-            </form>
+          
             </div>
     
                 <h2>감성 태그 픽</h2>
-                <form action="/book" method="POST">
+               
                 
                 <div class ="column">
                     <div class = "tag">
