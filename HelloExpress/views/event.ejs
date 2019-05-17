@@ -19,11 +19,36 @@
     <div>
         <center>
             <h1>EVENT</h1>
-            <p><%= event[0].title %></p>
-            <h3><%= event[0].content %></h3>
+            <h3>제목: <%= event[0].title %></h3>
+            <p>내용: <%= event[0].content %></p>
+            
             <div>
-                <p>댓글</p>
+                <h3>댓글</h3>
+                <table>
+                    <tr>
+                        <th>필명</th>
+                        <th>내용</th>
+                        <th>시간</th>
+                        <th> </th>
+                    </tr>
+                    <tr>
+                     <% comment.forEach(function(comment) { %>
+                        <td><%= comment.nickName %></td>
+                        <td><%= comment.content %></td>
+                        <td><%= comment.datetime.toISOString().replace(/T/, ' ').replace(/\..+/, '')%> %></td>
+                    </tr>
+                    <% }) %>
+                </table>
             </div>
+            <h3>댓글 달기</h3>
+            <form action="/event" method="POST">
+                <table>
+                    <tr>
+                        <td><input type="text" name="comment" placeholder="댓글 내용을 입력하세요"></td>
+                    </tr>
+                </table>
+                <input type="submit" value="확인">
+            </form>
         </center>
     </div>
 

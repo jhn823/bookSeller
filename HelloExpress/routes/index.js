@@ -357,25 +357,40 @@ router.get('/management/subscribe/history', function(req, res, next) {
 
 /*GET event page*/
 router.get('/event', function(req, res, next) {
-  if(!req.session.userID) res.redirect('user/login');
-  else{
-    userID = req.session.userID;
-    var eid=req.param("eid");
+  
+    var uid = req.session.userID;
+    var eid = req.param("eid");
 
     sql = 
     "SELECT * FROM Event WHERE '"+eid+"'=event_id;"
+    + "SELECT t2.nickName, t1.* FROM (SELECT * FROM Comment WHERE event_id ="+eid+" AND is_deleted !=1) t1\
+      LEFT JOIN (SELECT * FROM User) t2\
+      ON t1.user_index = t2.user_index;"
     ;
     connection.query(sql, function(err, query, fields){
       if (err) throw err;
       else{
         console.log(query);
-        obs = {
-          event: query[0]
+        obj = {
+          event: query[0],
+          comment: query[1],
+          uid: uid
         }
         res.render('event',obj);
       }
     });
-  }
+});
+router.post('/event', function(req, res, next){
+  var body = req.body;
+  sql = 
+  "INSERT INTO Comment (user_index, event_id, datetime, content)\
+  VALUES("+String(userID)+","+event_id+",NOW(),'"+body.comment+"');"
+  ;
+  connection.query(sql, function(err, result){
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect("/event");
 });
 
 // /*관리->구독관리->구독취소*/

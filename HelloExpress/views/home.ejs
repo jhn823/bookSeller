@@ -29,7 +29,8 @@
                             <tr>
                                 <td>
                                     <% book_today.forEach(function(book_today) { %>
-                                        <tr><td><%= book_today.title %></td>
+                                        <% link = "http://localhost:3000/book?bid="+ book_today.book_id %>
+                                        <tr><td><a href = <%=link %>><%= book_today.title %></td>
                                         <td><%= book_today.writer %></td>
                                         <td><%= book_today.publisher %></td></tr>
                                         <% }) %>
@@ -52,7 +53,8 @@
                         
                         <td>
                             <% readingbook_today.forEach(function(readingbook_today) { %>
-                                <tr><td><%= readingbook_today.title %></td>
+                                <% link = "http://localhost:3000/book?bid="+ readingbook_today.book_id %>
+                                <tr><td><a href = <%=link %>><%= readingbook_today.title %></td>
                                 <td><%= readingbook_today.writer %></td>
                                 <td><%= readingbook_today.publisher %></td>
                                 <td><%= readingbook_today.reader %></td></tr>
@@ -207,7 +209,7 @@
                         <td>
                             <% mili_original.forEach(function(mili_original) { %>
                                 <% link = "http://localhost:3000/book?bid="+ mili_original.book_id %>
-                                <tr><a href = <%=link %>><%= mili_original.title %></a></td>
+                                <tr><td><a href = <%=link %>><%= mili_original.title %></a></td>
                                 <td><%= mili_original.writer %></td>
                                 <% }) %>
                         </td>
