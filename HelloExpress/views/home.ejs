@@ -226,16 +226,30 @@
                 <% }) %>
             </div>
         </div>
-        <h2>진행중인 이벤트</h2>
+        <h2>진행중 이벤트</h2>
         <div class ="column">
             <table>
-                <% event.forEach(function(event) { %>
-                    <% link = "http://localhost:3000/event?eid="+ event.event_id %>
+                <% event_ing.forEach(function(event_ing) { %>
+                    <% link = "http://localhost:3000/event?eid="+ event_ing.event_id %>
                 <tr>
-                    <th><a href = <%=link %>><%= event.title %></a></th>
+                    <th><a href = <%=link %>><%= event_ing.title %></a></th>
                 </tr>
                 <tr>
-                    <td><%= event.to_date.toISOString().replace(/T/, ' ').replace(/\..+/, '')%> 까지</td>
+                    <td><%= event_ing.to_date.toISOString().replace(/T/, ' ').replace(/\..+/, '')%> 까지</td>
+                </tr>
+                <% }) %>
+            </table>
+        </div>
+        <h2>완료된 이벤트</h2>
+        <div class ="column">
+            <table>
+                <% event_end.forEach(function(event_end) { %>
+                    <% link = "http://localhost:3000/event?eid="+ event_end.event_id %>
+                <tr>
+                    <th><a href = <%=link %>><%= event_end.title %></a></th>
+                </tr>
+                <tr>
+                    <td><%= event_end.to_date.toISOString().replace(/T/, ' ').replace(/\..+/, '')%> 까지</td>
                 </tr>
                 <% }) %>
             </table>

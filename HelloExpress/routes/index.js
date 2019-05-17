@@ -121,7 +121,8 @@ router.get('/', function(req, res, next) {
         FROM Book_Tag \
         GROUP BY content ORDER BY count(*) DESC LIMIT 5;"
     // [11] column 9 - 이벤트 목록
-    + "SELECT * FROM Event WHERE to_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 100 MONTH)"
+    + "SELECT * FROM class.Event WHERE to_date > NOW();"
+    + "SELECT * FROM class.Event WHERE to_date < NOW();"
     ;
 
   connection.query(sql, function(err, query, fields){
@@ -142,7 +143,8 @@ router.get('/', function(req, res, next) {
       book_year: query[8],
       mili_original: query[9],
       tag_pick: query[10],
-      event: query[11]
+      event_ing: query[11],
+      event_end: query[12]
     };
     res.render('home',obj);
   });
@@ -161,10 +163,12 @@ router.get('/search', function(req, res, next) {
   }
   else{
     sql = "SELECT * FROM Book WHERE (title LIKE '%" + q +"%') OR (writer LIKE '%" + q +"%') OR (publisher LIKE '%" + q +"%');";
-    console.log(sql)
     connection.query(sql, function(err, result, fields){
-    console.log(result);
-    res.json(result);
+      console.log(result);
+      obj={
+        book_result: result
+      };
+      res.render('searchResult', obj);
     });
   }
 
