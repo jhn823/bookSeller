@@ -44,8 +44,9 @@
                 </tr>
                 
                 <tr>
+                    <% link = "http://localhost:3000/shelf/bookInShelf?bid=" + book[0].book_id %>
                     <td>이 책이 담긴 서재</td>
-                    <td><%= read_count[0].cnt %></td>
+                    <td><button style="width:30px;"><a href = <%=link %>><%= read_count[0].cnt %></a></button></td>
                 </tr>
                 </table>
             </form>
@@ -57,30 +58,30 @@
                 <div class ="column">
                     <div class = "tag">
                         <% tag.forEach(function(tags) { %>
-                        <button name="tagID" value="<%= tags.book_tag_id %>">#<%= tags.content %></button>
+                        <button name="tagID" value="<%= tags.book_tag_id %>" style="background-color: #fee9e6">#<%= tags.content %></button>
                         <% }) %>
+
                     </div>
                 </div>  
                 <h4>나의 관심 태그</h4>
                 <div class ="column">
                         <div class = "tag">
                             <% love_tags.forEach(function(love_tag) { %>
-                            <button name="tagID" value="<%= love_tag.book_tag_id %>">#<%= love_tag.content %></button>
+                            <button name="tagID" value="<%= love_tag.book_tag_id %>" style="background-color: #fdd3ce">#<%= love_tag.content %></button>
                             <% }) %>
                         </div>
-
+                
                     </div>
                 <h4>내가 작성한 태그</h4>
                 <div class ="column">
                         <div class = "tag">
                             <% my_tags.forEach(function(my_tag) { %>
-                            <button name="tagID" value="<%= my_tag.book_tag_id %>">#<%= my_tag.content %></button>
+                            <button name="tagID" value="<%= my_tag.book_tag_id %>" style="background-color: #fba69d">#<%= my_tag.content %></button>
                             <button name="delTag" value="<%= my_tag.book_tag_id %>">X</button></br>
                             <% }) %>
                         </div>
 
                     </div>    
-
                 <!--create new tag-->
                 <div class ="column">
                     <div class = "tag">
@@ -90,32 +91,42 @@
                 </form>                              
             <h2>이 저자, 역자의 다른 도서</h2>
             <div class ="column">
-                <div class = "list">
-                    <p>한강</p>
-                    <p>소년이 온다</p>
-                </div>
+                <% top_equ_writers.forEach(function(book) { %>
+                    <div class = "list">
+                            <p><%= book.writer.substring(0, 8) %></p>
+                            <p><%= book.title.substring(0, 8) %></p>
+                        </div>
+                <% }) %>
             </div>
 
             <h2>이 분야의 인기도서</h2>
             <div class ="column">
-                <div class = "list">
-                    <p>한강</p>
-                    <p>소년이 온다</p>
-                </div>
+                <% top_equ_cates.forEach(function(book) { %>
+                    <div class = "list">
+                            <p><%= book.writer.substring(0, 8) %></p>
+                            <%= book.title.substring(0, 8) %>
+                        </div>
+                <% }) %>
             </div>
 
 
         <h2>포스트</h2>
         <div class ="column">
                 <table>
+                    
                     <tr>
-                        <th>제목</th>
                         <th>작성자</th>
+                        <th>제목</th>
+                        <th>서재</th>
                     </tr>
+                    <% related_posts.forEach(function(post) { %>
+                        <% link = "http://localhost:3000/shelf/post?pid=" + post.post_id + "&uid=" +post.user_index %>
                     <tr>
-                        <td>독서노트</td>
-                        <td>성공한 여행가_27</td> 
+                        <td><%= post.nickName.substring(0, 10) %></td> 
+                        <td><%= post.title.substring(0, 10) %></td>
+                        <td><%= post.libraryName.substring(0, 10) %></td> 
                     </tr>
+                    <% }) %>
                 </table>
         </div>
     </center>
