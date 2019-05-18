@@ -1,3 +1,7 @@
+
+::-webkit-scrollbar {
+  display:none;
+  } 
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -28,6 +32,7 @@ a{
 .column{
   width :40%;
   overflow : scroll;
+  -ms-overflow-style: none;
   background-color : whitesmoke;
   margin-bottom : 3%;
   white-space:nowrap;
@@ -44,6 +49,18 @@ a{
   overflow: hidden;
   background-color :#F09696;
 }
+
+.list2 {
+  display : inline-block;
+  margin : 2%;
+  padding: 10px;
+  border : 1px solid black;
+  font-weight : bold;
+  width : 80px;
+  overflow: hidden;
+  background-color :wheat;
+}
+
 .tag {
   display : inline-block;
   margin : 2%;
@@ -51,12 +68,15 @@ a{
 }
 table { 
   width : 100%;
+
 }
 td{
+  border : 10px;
   margin : 10px;
   padding: 9px;
   text-align: center;
 }
+
 th{
   font-size : 20px;
 }

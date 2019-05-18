@@ -19,11 +19,28 @@
     <div>
         <center>
             <h1>POST</h1>
-            <p><%= writer[0].nickName %></p>
-            <h3><%= post[0].title %></h3>
+            <p>작가 : <%= writer[0].nickName %></p>
+            <h3>제목 : <%= post[0].title %></h3>
             <div>
-                <p><%= post[0].contents %></p>
+                <p>글 내용 : <%= post[0].contents %></p>
             </div>
+            <h3>댓글</h3>
+            <table>
+            <% comments.forEach(function(comment) { %>
+                <tr>
+                    <td><%= comment.nickName %></td> 
+                    <td><%= comment.content %></td> 
+                    <td><%= comment.datetime.toISOString().replace(/T/, ' ').replace(/\..+/, '') %></td> 
+                </tr>
+            <% }) %>
+            </table>
+          
+            <h3>댓글달기</h3>
+            <% link = "http://localhost:3000/shelf/post?pid=" +post[0].post_id %>
+            <form action=<%= link %> method="POST" >
+                <input type = "text" name ="comment">
+                <input type="submit" value="확인">
+            </form>
         </center>
     </div>
 

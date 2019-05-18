@@ -7,7 +7,6 @@ var indexRouter = require('./routes/index');
 var  managementRouter = require('./routes/management');
 var shelfRouter = require('./routes/shelf');
 var bookRouter = require('./routes/book');
-var bookTagRouter = require('./routes/bookTag');
 
 
 var app = express();
@@ -41,7 +40,6 @@ app.use('/', indexRouter);
 app.use('/management', managementRouter);
 app.use('/shelf', shelfRouter);
 app.use('/book', bookRouter);
-app.use('/bookTag', bookTagRouter);
 
 // app.use('/shelf', shelfRouter);
 

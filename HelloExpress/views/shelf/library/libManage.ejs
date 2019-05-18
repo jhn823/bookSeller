@@ -27,7 +27,7 @@
                         <td>
                             <% category_count.forEach(function(category) { %>
                                 <% parsed = category.bookshelf_title.replace(/ /g, '+'); console.log(parsed) %>
-                                <% mlink = "http://localhost:3000/shelf/libManage/modify?cname=" + parsed  %>
+                                <% mlink = "http://localhost:3000/shelf/libManage/libSet?cname=" + parsed  %>
                                 <% dlink = "http://localhost:3000/shelf/libManage/delete?cname=" +  parsed  %>
                                 <tr>
                                     <td><%= category.bookshelf_title %> (<%= category.count %>권)</td>
