@@ -97,7 +97,9 @@ router.post('/user/login', function(req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-
+  userID = req.session.userID;
+  if(!userID) res.redirect('user/login');
+  else {
   sql = 
     // [0] column 1 - 오늘의 책
     "SELECT Book.* FROM Book \
@@ -192,6 +194,7 @@ router.get('/', function(req, res, next) {
     };
     res.render('home',obj);
   });
+}
 });
 
 router.post('/', function(req, res, next){

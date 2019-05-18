@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Nanum+Myeongjo|Noto+Serif+KR|Song+Myung');
 
 ::-webkit-scrollbar {
   display:none;
@@ -5,6 +6,13 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+.head{
+  font-family: 'Song Myung', serif;
+  font-size: 50px;
+  /* font-family: cursive; */
+  margin-top : 0;
+  
 }
 .header{
   background-color : whitesmoke;
