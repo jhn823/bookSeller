@@ -15,16 +15,29 @@ var connection = mysql.createConnection({
 
 var obj = {};
 
-var userID ;
+var userID =-1;
 var bookID ;
 
 /* book page */
 router.get('/', function(req, res, next) {
+  if(!req.session.userID) res.redirect('user/login');
+  else{
   userID = req.session.userID;
   bookID = req.param("bid");
-  console.log("get------------");
-  console.log(userID);
-  console.log(bookID);
+  var pid;
+  /*var test="SELECT * FROM Post WHERE user_index=2 AND title='ㅈㅎ' AND contents='ㅈㅎㅈㅎ2'";
+  connection.query(test, function(err, query, fields){
+    console.log("test------");
+    console.log(query[0].post_id);
+    pid= query[0].post_id;
+    console.log(pid);
+    console.log("-----------")
+    if(err){
+      console.log("test에 오류가 있습니다.");
+      console.log(err);
+    } 
+
+  });*/
   sql = 
   //book 정보 -query[0]
   "SELECT * FROM Book WHERE book_id='" + bookID + "';"+
@@ -76,7 +89,7 @@ router.get('/', function(req, res, next) {
       };
       res.render('book', obj);  
   });  
-
+  }
 });
 router.post('/', function(req, res, next) {
   var love = req.body.love;
@@ -86,44 +99,8 @@ router.post('/', function(req, res, next) {
   var query;
   userID = req.session.userID;
   bookID = req.param("bid");
-  console.log("post------------");
-  console.log(bookID);
-  console.log(userID);
 
-  //책 좋아요
-  if(love==='1'){
-  connection.query("SELECT * FROM Love WHERE type='book' AND book_id=" + String(bookID) + " AND user_index=" + String(userID),
-  function(err, result, fields){
-    if(err){
-      console.log("쿼리문에 오류가 있습니다.");
-      console.log(err);
-    }
-    else if( result.length > 0 && result ){
-      if( result[0].love_status == 1){ // 좋아요 취소
-        console.log("좋아요 취소 toggle");
-        sql = "UPDATE Love SET love_status = 0 WHERE (type='book' AND user_index = "+String(userID)+" AND book_id = "+String(bookID)+");UPDATE Book Set like_count=like_count - 1 WHERE book_id = "+String(bookID);
-      }
-        else{ // 좋아요  
-        console.log("좋아요 toggle");
-        sql = "UPDATE Love SET love_status = 1 WHERE (type='book' AND user_index = "+String(userID)+" AND book_id = "+String(bookID)+");UPDATE Book Set like_count=like_count + 1 WHERE book_id = "+String(bookID);
-      }
-        connection.query(sql,
-      function(err, result, fields){
-        console.log(err, result);
-        res.redirect("/book?bid="+String(bookID));
-      }) 
-    }
-    else{
-      console.log("좋아요 생성");
-      sql = "INSERT INTO Love (`type`, `user_index`, `book_id`) VALUES ('book', "+String(userID)+", "+String(bookID)+");UPDATE Book Set like_count = like_count + 1 WHERE book_id = "+String(bookID);
-      connection.query(sql,
-      function(err, result, fields){
-        res.redirect("/book?bid="+String(bookID));
-      })
-      console.log(err, sql);
-    }
-  });
-  }
+
   // new tag create
   if(!(new_tag==='') && new_tag != null){
     sql =  "SELECT COUNT(*) AS count FROM Book_Tag WHERE book_id = "+String(bookID)+" AND user_index="+String(userID)+" AND is_deleted = 0;";
@@ -141,13 +118,51 @@ router.post('/', function(req, res, next) {
             console.log("new_tag 쿼리문에 오류가 있습니다.");
             console.log(err);
           }
-          //res.redirect("/book?bid="+String(bookID));
           res.redirect("/book?bid="+String(bookID));
         }); 
       }
 
     });
   }
+
+    //책 좋아요
+    if((new_tag==='') && love==='1'){
+      connection.query("SELECT * FROM Love WHERE type='book' AND book_id=" + String(bookID) + " AND user_index=" + String(userID),
+      function(err, result, fields){
+        if(err){
+          console.log("쿼리문에 오류가 있습니다.");
+          console.log(err);
+        }
+        else if( result.length > 0 && result ){
+          console.log(result[0].love_status == 1);
+          if( result[0].love_status == 1){ // 좋아요 취소
+            console.log("좋아요 취소 toggle");
+            sql = "UPDATE Love SET love_status = 0 WHERE (type='book' AND user_index = "+String(userID)+" AND book_id = "+String(bookID)+");\
+            UPDATE Book Set like_count=like_count - 1 WHERE book_id = "+String(bookID);
+          }
+            else{ // 좋아요  
+            console.log("좋아요 toggle");
+            sql = "UPDATE Love SET love_status = 1 WHERE (type='book' AND user_index = "+String(userID)+" AND book_id = "+String(bookID)+");\
+            UPDATE Book Set like_count=like_count + 1 WHERE book_id = "+String(bookID);
+          }
+            connection.query(sql,
+          function(err, result, fields){
+            console.log(err, result);
+            res.redirect("/book?bid="+String(bookID));
+          }) 
+        }
+        else{
+          console.log("좋아요 생성");
+          sql = "INSERT INTO Love (`type`, `user_index`, `book_id`) VALUES ('book', "+String(userID)+", "+String(bookID)+");\
+          UPDATE Book Set like_count = like_count + 1 WHERE book_id = "+String(bookID);
+          connection.query(sql,
+          function(err, result, fields){
+            res.redirect("/book?bid="+String(bookID));
+          })
+          console.log(err, sql);
+        }
+      });
+      }
   if(tag_ID > 0 && new_tag===''){
     query= "SELECT COUNT(Book_Tag.book_tag_id) AS count FROM Book_Tag \
     LEFT JOIN Love \
@@ -230,5 +245,55 @@ router.post('/', function(req, res, next) {
   }
 });
 
+router.post('/bookSubscribe', function(req, res, next) {
+  userID = req.session.userID;
+  bookID = req.param("bid");
+  sql = "SELECT user_index AS uid FROM User WHERE user_index=? AND is_premium=1";
+  connection.query(sql,[userID],
+    function(err, result) {
+    if (err) {
+      console.log(err);
+    }
+    if ( result.length == 0){
+      res.render('alert', {message : '프리미엄 회원만 구독할 수 있습니다.'}); 
+    }
+    else{
+      query="INSERT INTO Book_Read (book_id, user_index, borrow_date, return_date) \
+      VALUES(?,?,now(),DATE_ADD(NOW(), INTERVAL 31 DAY));\
+      UPDATE Book Set borrow_count = borrow_count + 1 WHERE book_id =?";
+      connection.query(query,[bookID, userID, bookID],function(err, result, fields){
+        if(err){
+          console.log("book subscribe 추가에 에러");
+          console.log(err);
+        }
+        console.log("book subscribe!!!!!!");
+        console.log(result);
+        res.redirect("/book?bid="+String(bookID));            
+      });
+    }
+  });
+});
+
+
+/* GET search page. */
+router.get('/bookInShelf', function(req, res, next) {
+  var bid=req.param("bid");
+  sql = "SELECT b.*, u.*, Book.title FROM Book_Read AS b\
+  LEFT JOIN User AS u\
+  ON b.user_index=u.user_index\
+  LEFT JOIN Book \
+  ON b.book_id=Book.book_id\
+  WHERE (b.return_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 31 DAY)) AND b.book_id=?";
+  connection.query(sql,[bid],function(err, result, fields){
+    if(!result){
+      res.render('alert', {message : 'no history'}); 
+    }
+  obj = 
+  {results: result};
+  console.log(result);
+  res.render('shelf/bookInShelf', obj);               
+  });
+
+});
 
 module.exports = router;

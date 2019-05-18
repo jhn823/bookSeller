@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/home.css' />
+    <title>page2-alarm</title>
+</head>
+<body>  
+    <div>
+        <center>
+            <h1>Alarm 확인</h1>
+            <div class ="column" style="width:900px;">
+                    <table>
+                            <td>
+                                <tr>
+                                <% alarms.forEach(function(alarm) { %>
+                                    <li>
+                                    <%= alarm.nickName %>님! &nbsp <%= alarm.content %>&nbsp
+                                    <%= alarm.pubDate %>
+                                    </li>
+                                <% }) %>
+                                </tr>
+                            </td>
+                    </table>
+                </div>
+                <h1>Alarm 추가</h1>
+                <form action="http://localhost:3000/management/subscribe/addAlarm" method="POST">
+                <div class ="column" style="width:900px;">
+                        <table>
+                            <div class = "tag">
+                                user_index : <input type="text" name="alarm_uid" placeholder="user_index " style="width:100px; padding:5px"><br>
+                                알람 내용: <input type="text" name="alarm_content" placeholder="alarm conent" style="width:300px; padding:5px"><br>
+                            </div>
+                            <button>submit</button>
+                        </table>
+                    </div>
+                    </form>
+                <h1>Alarm 삭제</h1>
+                <form action="http://localhost:3000/management/subscribe/deleteAlarm" method="POST">
+                <div class ="column" style="width:900px;">
+                        <table>
+                                <tr>
+                                <% allAlarms.forEach(function(alarm) { %>
+                                    <li>
+                                    <%= alarm.nickName %>님! &nbsp
+                                    <%= alarm.content %>&nbsp
+                                    <%= alarm.pubDate %>
+                                    <button name="del_alarm" value="<%= alarm.alarm_id %>">X</button>
+                                    </li>
+                                <% }) %>
+                                </tr>
+                        </table>
+                    </div>
+                    </form>
+        </center>
+    </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+
+
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/home.css' />
+    <title>유저 관심 카테고리</title>
+</head>
+<body>  
+    <div>
+        <center>
+            <h1>User 관심 카테고리 확인</h1>
+            <div class ="column" style="width:900px;">
+                  <table>
+                    <td>
+                      <tr>
+                        <% fav_cates.forEach(function(cate) { %>
+                            <li>
+                            <%= cate.content %>
+                            </li>
+                        <% }) %>
+                      </tr>
+                    </td>
+                  </table>
+                </div>
+            <h1>User 관심 카테고리 추가</h1>
+            <form action="http://localhost:3000/management/subscribe/addInterestCategory" method="POST">
+            <div class ="column" style="width:900px;">
+                    <table>
+                            <tr>
+                            <% categories.forEach(function(cate) { %>
+                                <li>
+                                <%= cate.content %>
+                                <button name="add_cate" value="<%= cate.content %>">추가</button>
+                                </li>
+                            <% }) %>
+                            </tr>
+                    </table>
+                </div>
+                </form>
+        </center>
+    </div>
+</body>
+</html>
