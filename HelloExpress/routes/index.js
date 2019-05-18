@@ -97,6 +97,7 @@ router.post('/user/login', function(req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+
   sql = 
     // [0] column 1 - 오늘의 책
     "SELECT Book.* FROM Book \
@@ -404,18 +405,23 @@ router.post('/create', function(req, res, next) {
 
 /*GET event page*/
 router.get('/event', function(req, res, next) {
-  
-    var uid = req.session.userID;
+  if(!req.session.userID) res.redirect('user/login');
+  else{
+   var uid = req.session.userID;
     var eid = req.param("eid");
 
     sql = 
     "SELECT * FROM Event WHERE '"+eid+"'=event_id;"
-    + "SELECT t2.nickName, t1.* FROM (SELECT * FROM Comment WHERE event_id ="+eid+" AND is_deleted !=1) t1\
+    + "SELECT t2.nickName, t1.*, date_format(datetime, '%Y-%m-%d') AS pubDate \
+      FROM (SELECT * FROM Comment WHERE event_id ="+eid+" AND is_deleted=0) t1\
       LEFT JOIN (SELECT * FROM User) t2\
       ON t1.user_index = t2.user_index;"
     ;
     connection.query(sql, function(err, query, fields){
-      if (err) throw err;
+      if (err) {
+        console.log("IN EVENT");
+        console.log(err);
+      }
       else{
         console.log(query);
         obj = {
@@ -426,20 +432,39 @@ router.get('/event', function(req, res, next) {
         res.render('event',obj);
       }
     });
+  }
 });
-router.post('/event', function(req, res, next){
-  var body = req.body;
+router.post('/event/addComment', function(req, res, next){
+  userID = req.session.userID;
+  var comment = req.body.comment;
+  var eid = req.body.eid;
   sql = 
   "INSERT INTO Comment (user_index, event_id, datetime, content)\
-  VALUES("+String(userID)+","+event_id+",NOW(),'"+body.comment+"');"
-  ;
-  connection.query(sql, function(err, result){
-    if (err) throw err;
+  VALUES(?,?,NOW(),?);";
+  connection.query(sql,[uid, eid, comment ], function(err, result){
+    if (err){
+      console.log("IN ADD EVENT");
+      console.log(err);
     console.log(result.affectedRows + " record(s) updated");
+    }
   });
-  res.redirect("/event");
+  res.redirect("/event?eid="+eid);
 });
 
+router.post('/event/deleteComment', function(req, res, next){
+  userID = req.session.userID;
+  var eid = req.param("eid");
+  var cid = req.body.del_cid;
+  console.log(cid);
+  sql = "UPDATE Comment SET is_deleted=1 WHERE comment_id= ? AND user_index=?;";
+  connection.query(sql,[cid,userID], function(err, result){
+    if (err){
+      console.log("IN DELETE EVENT");
+      console.log(err);
+    }
+  });
+  res.redirect("/event?eid="+eid);
+});
 // /*관리->구독관리->구독취소*/
 // router.get('/management/subscribe/autopay', function(req, res, next) {
 //   var sql = "SELECT MAX (Index) FROM Buy;";
