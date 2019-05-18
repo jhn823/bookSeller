@@ -441,7 +441,7 @@ router.post('/event/addComment', function(req, res, next){
   sql = 
   "INSERT INTO Comment (user_index, event_id, datetime, content)\
   VALUES(?,?,NOW(),?);";
-  connection.query(sql,[uid, eid, comment ], function(err, result){
+  connection.query(sql,[userID, eid, comment ], function(err, result){
     if (err){
       console.log("IN ADD EVENT");
       console.log(err);

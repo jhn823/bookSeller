@@ -42,7 +42,10 @@ router.get('/', function(req, res, next) {
   //book 정보 -query[0]
   "SELECT * FROM Book WHERE book_id='" + bookID + "';"+
   //이 책이 담긴 서재 -query[1]
-  "SELECT COUNT(book_read_id) AS cnt FROM Book_Read WHERE book_id='" + bookID + "';"+
+  "SELECT COUNT(b.book_read_id) AS cnt FROM Book_Read AS b\
+  LEFT JOIN Book\
+  ON b.book_id=Book.book_id\
+  WHERE (b.return_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 31 DAY)) AND b.book_id="+String(bookID)+";"+
   //모든 태그 -query[2]
   "SELECT * FROM Book_Tag WHERE book_id = "+String(bookID)+" AND is_deleted = 0;"+
   //관심 태그 -query[3]
