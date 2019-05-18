@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Document</title>
+</head>
+<body>
+    <center>
+    <h1>관심사 관련 책</h1>
+            <div class ="column">
+                    <table>
+                            <tr>
+                                <th>제목</th>
+                                <th>작가</th>
+                                <th>출판사</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <% book.forEach(function(book) { %>
+                                        <% link = "http://localhost:3000/book?bid="+ book.book_id %>
+                                        <tr><td><a href = <%=link %>><%= book.title %></td>
+                                        <td><%= book.writer %></td>
+                                        <td><%= book.publisher %></td></tr>
+                                        <% }) %>
+                                </td>
+                        </tr>
+                    </table>
+            </div>
+        <h1>관심사 관련 포스트</h1>
+            <div class ="column">
+                    <table>
+                            <tr>
+                                <th>제목</th>
+                                <th>필명</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <% post.forEach(function(post) { %>
+                                        <% link = "http://localhost:3000/shelf/post?pid=" + post.post_id+ "&uid=" +post.user_index %>
+                                        <tr><td><a href = <%=link %>><%= post.title %></a></td>
+                                        <td><%= post.nickName %></td>
+                                        <% }) %>
+                                </td>
+                        </tr>
+                    </table>
+            </div>
+    <center>

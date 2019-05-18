@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>CSS Template</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style the header */
+.header {
+  background-color: #f1f1f1;
+  padding: 0px;
+  text-align: center;
+  font-size: 35px;
+}
+
+/* Create three equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<h2>ALARM</h2>
+<div class="header">
+  <h5>Alarm 확인</h5>
+</div>
+
+<div class="row">
+  <div class="column" style="background-color:#ffe8e6;">유저
+        <% alarms.forEach(function(alarm) { %>
+            <li>
+            <%= alarm.nickName %>님! 
+            </li>
+        <% }) %>
+</div>
+  
+  <div class="column" style="background-color:	 #fff5e6;">알람
+        <% alarms.forEach(function(alarm) { %>
+            <li>
+            <%= alarm.content %>
+            </li>
+        <% }) %>
+</div>
+  <div class="column" style="background-color:#ffe8e6;">날짜
+        <% alarms.forEach(function(alarm) { %>
+            <li>
+            <%= alarm.pubDate %>
+            </li>
+        <% }) %>
+</div>
+</div>
+<div class="header">
+        <h5>Alarm 추가</h5>
+      </div>
+      
+      <div class="row">
+            <div class="column" style="background-color: #fff5e6; width:100px;">
+            <form action="http://localhost:3000/management/subscribe/addAlarm" method="POST">
+                <div class ="column" style="width:900px;">
+                    <table>
+                        <div class = "tag">
+                            user_index : <input type="text" name="alarm_uid" placeholder="user_index " style="width:100px; padding:5px"><br>
+                            알람 내용: <input type="text" name="alarm_content" placeholder="alarm conent" style="width:300px; padding:5px"><br>
+                        </div>
+                        <button>submit</button>
+                    </table>
+                </div>
+                </form>
+      </div>
+      </div>
+<div class="header">
+<h5>Alarm 삭제</h5>
+</div>
+<form action="http://localhost:3000/management/subscribe/deleteAlarm" method="POST">
+<div class="row">
+    <div class="column" style="background-color:#ffe8e6;">유저
+            <% allAlarms.forEach(function(alarm) { %>
+                <li>
+                <%= alarm.nickName %>님! 
+                </li>
+            <% }) %>
+    </div>
+    
+    <div class="column" style="background-color:	 #fff5e6;">알람
+            <% allAlarms.forEach(function(alarm) { %>
+                <li>
+                <%= alarm.content %>
+                </li>
+            <% }) %>
+    </div>
+    <div class="column" style="background-color:#ffe8e6;">날짜
+            <% allAlarms.forEach(function(alarm) { %>
+                <li>
+                <%= alarm.pubDate %><button name="del_alarm" value="<%= alarm.alarm_id %>">X</button>
+                </li>
+            <% }) %>
+    </div>
+</div>
+</form>
+</div>
+</body>
+</html>

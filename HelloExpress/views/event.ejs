@@ -24,6 +24,7 @@
             
             <div>
                 <h3>댓글</h3>
+                <form action="/event/deleteComment?eid=<%= event[0].event_id %>" method="POST">
                 <table>
                     <tr>
                         <th>필명</th>
@@ -34,20 +35,24 @@
                     <tr>
                      <% comment.forEach(function(comment) { %>
                         <td><%= comment.nickName %></td>
-                        <td><%= comment.content %></td>
-                        <td><%= comment.datetime.toISOString().replace(/T/, ' ').replace(/\..+/, '')%> %></td>
+                        <td><%= comment.content %>
+                        <button name="del_cid" value="<%= comment.comment_id %>" style="background-color:#e6e6e6">X</button>
+                        </td>
+                        <td><%= comment.pubDate %> %></td>
                     </tr>
                     <% }) %>
                 </table>
+                </form>
             </div>
             <h3>댓글 달기</h3>
-            <form action="/event" method="POST">
+            <form action="/event/addComment" method="POST">
                 <table>
                     <tr>
-                        <td><input type="text" name="comment" placeholder="댓글 내용을 입력하세요"></td>
+                        <td><input type="comment" name="comment" placeholder="댓글 내용을 입력하세요">
+                        <button name="eid" value="<%= event[0].event_id %>">submit</button>
+                        </td>
                     </tr>
                 </table>
-                <input type="submit" value="확인">
             </form>
         </center>
     </div>

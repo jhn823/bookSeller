@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>인용문</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style the header */
+.header {
+  background-color: #f1f1f1;
+  padding: 0px;
+  text-align: center;
+  font-size: 35px;
+}
+
+</style>
+</head>
+<body>
+<div class="header">
+  <h5><%= quotes[0].nickName %>님의 인용문</h5>
+</div>
+
+<div class="row">
+    <form action="http://localhost:3000/management/subscribe/deleteQuote" method="POST">
+  <div class="column" style="background-color:#ffe8e6;"><h2 style="text-align: center">인용문 보기</h2>
+    <% quotes.forEach(function(quote) { %>
+        <h4 style="margin-bottom:0px;"><<%= quote.title %>></h4>        
+        "<%= quote.content %>"&nbsp;<button><a href="http://localhost:3000/management/subscribe/set_quote?qid=<%= quote.quotation_id %>">수정</a></button>
+         <button name="del_qid", value="<%= quote.quotation_id %>">X</button>
+          
+        <% }) %>
+  </div>
+</form>
+</div>
+<div class="header">
+    <h5>인용문 추가</h5>
+  </div>
+  
+  <div class="row">
+        <div class="column" style="background-color: #fff5e6;text-align: center">
+        <form action="http://localhost:3000/management/subscribe/addQuote" method="POST">
+            <div class ="column" style="width:900px;">
+                <table>
+                    <div>
+                        book_id : <input type="text" name="bookID" placeholder="book_id " style="width:100px; padding:5px"><br>
+                        인용문: <input type="text" name="quote_content" placeholder="인용문을 입력해주세요" style="width:300px; padding:5px">&nbsp;
+                        <button>추가</button>
+                      </div>
+                </table>
+            </div>
+            </form>
+  </div>
+  </div>
+</body>
+</html>

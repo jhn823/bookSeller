@@ -6,14 +6,19 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>구독내역조회</h1>
+    <h1>자동 결제 해지 신청</h1>
     <hr>
+    <% if(auto[0].auto == 1){%>
+        <p> 다음 정기 결제일은 <%= date[0].date %> 입니다</p>
 
-    <form action="/management/myinfo/set_open" method="POST">
+    <% }else{ %>
+        <p> 정기 결제 해지 상태입니다</p>
+    <% } %>
+    <form action="/management/subscribe/autopay" method="POST">
         <table>
             <tr>
-                <input type="radio" name="open" value=1> 자동결제<br>
-                <input type="radio" name="open" value="0"> 자동결제 취소<br>
+                <input type="radio" name="autopay" value=1> 자동결제<br>
+                <input type="radio" name="autopay" value="0"> 자동결제 취소<br>
             </tr>
         </table>
         <input type="submit" value="확인">

@@ -35,18 +35,61 @@ router.post('/user/login', function(req, res, next) {
       console.log(err);
     }
     else if(result && result[0].count ==1){
-      connection.query("SELECT *  FROM User WHERE  email = '" + body.email + "'",
-      function(err, result, fields){
-        console.log(result);
-        userID = result[0].user_index;
-        req.session.userID = userID;
-        if(req.session.userID)  console.log("success" + req.session.userID)
-        // req.app.locals.userID = result[0].user_index;
-        res.redirect("/");
+      console.log("유저 이메일" + body.email);
+      
+      sql = 
+      "SELECT *  FROM User WHERE email = '" + body.email + "';"
+      + "SELECT to_date FROM Buy\
+        WHERE user_index = (SELECT user_index FROM User WHERE email='"+body.email+"')\
+        ORDER BY to_date DESC LIMIT 1;";
+
+      connection.query(sql, function(err, result, fields){
+        if (err){
+          console.log("쿼리문에 오류가 있습니다.");
+          console.log(err);
+        }
+        else{
+          var today = new Date();
+          console.log(result[0][0]);
+          console.log(result[1][0].to_date);
+          console.log(result[0][0].user_index);
+          console.log(today);
+          console.log(sql);
+          
+          userID = result[0][0].user_index;
+          console.log("유저 인덱스 "+userID);
+          req.session.userID = userID;
+          if(req.session.userID)  console.log("success" + req.session.userID)
+          // req.app.locals.userID = result[0].user_index;
+
+          
+          // console.log(result[1].to_date);
+          //정기결제 설정 && 결제일 지났으면 결제 페이지로 이동
+          if(result[0][0].auto==1 && result[1][0].to_date <= today){
+            console.log("정기결제");
+            sql = "INSERT INTO Buy (user_index, from_date, to_date) VALUES ("+userID+", NOW(), date_add(NOW(), INTERVAL 1 MONTH))";
+            connection.query(sql, function(err, result, fields){
+              if (err){
+                console.log("쿼리문에 오류가 있습니다.");
+                console.log(err);
+              }
+              else{
+                return res.render('alert', {message : '정기권이 자동 결제 되었습니다.'});
+              }
+            });
+            
+          }
+
+          //아니면 홈으로
+          else {
+            console.log("결제보류");
+            return  res.redirect("/");
+          }
+        }
       }) 
     }
     else{
-      res.render('alert', {message : 'no such user'}); 
+        return res.render('alert', {message : 'no such user'}); 
     }
   });
 });
@@ -54,6 +97,7 @@ router.post('/user/login', function(req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+
   sql = 
     // [0] column 1 - 오늘의 책
     "SELECT Book.* FROM Book \
@@ -249,130 +293,135 @@ router.post('/create', function(req, res, next) {
   });
 });
 
-/*관리->계정관리*/
-router.get('/management/myinfo', function(req, res, next) {
-  sql = "SELECT * FROM User WHERE " + "'" + userID + "' = user_index";
-  connection.query(sql,function(err, result, fields){
-    if (err) throw err;
-    else{
-      var string=JSON.stringify(result);
-      var info =  JSON.parse(string);
-      obj = {user : info}
-      console.log(obj);
-      res.render('management/myinfo', obj);  
-    }
+// /*관리->계정관리*/
+// router.get('/management/myinfo', function(req, res, next) {
+//   sql = "SELECT * FROM User WHERE " + "'" + userID + "' = user_index";
+//   connection.query(sql,function(err, result, fields){
+//     if (err) throw err;
+//     else{
+//       var string=JSON.stringify(result);
+//       var info =  JSON.parse(string);
+//       obj = {user : info}
+//       console.log(obj);
+//       res.render('management/myinfo', obj);  
+//     }
       
-  });
-});
+//   });
+// });
 
-/*관리->계정관리->필명 수정*/
-router.get('/management/myinfo/set_writer', function(req, res, next) {
-  res.render('management/myinfo/set_writer');
-});
-router.post('/management/myinfo/set_writer', function(req, res, next) {
-  var body = req.body;
-  sql = "UPDATE User SET NickName = '"+ body.name +"' WHERE user_index = " + String(userID) ;
-  connection.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log(result.affectedRows + " record(s) updated");
-  });
-  res.redirect("/management/myinfo");
-});
-
-
-/*관리->계정관리->서재명 수정*/
-router.get('/management/myinfo/set_shelf', function(req, res, next) {
-  res.render('management/myinfo/set_shelf');
-});
-router.post('/management/myinfo/set_shelf', function(req, res, next) {
-  var body = req.body;
-  sql = "UPDATE User SET libraryName = '"+ body.name +"' WHERE user_index = " + String(userID) ;
-  connection.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log(result.affectedRows + " record(s) updated");
-  });
-  res.redirect("/management/myinfo");
-});
-
-/*관리->계정관리->서재설명 수정*/
-router.get('/management/myinfo/set_description', function(req, res, next) {
-  res.render('management/myinfo/set_description');
-});
-router.post('/management/myinfo/set_description', function(req, res, next) {
-  var body = req.body;
-  sql = "UPDATE User SET libraryDescription = '"+ body.description +"' WHERE user_index = " + String(userID) ;
-  connection.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log(result.affectedRows + " record(s) updated");
-  });
-  res.redirect("/management/myinfo");
-});
-
-/*관리->계정관리->핸드폰 번호 수정*/
-router.get('/management/myinfo/set_phone', function(req, res, next) {
-  res.render('management/myinfo/set_phone');
-});
-
-router.post('/management/myinfo/set_phone', function(req, res, next) {
-  var body = req.body;
-  sql = "UPDATE User SET PhoneNumber = '"+ body.phone +"' WHERE user_index = " + String(userID) ;
-  connection.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log(result.affectedRows + " record(s) updated");
-  });
-  res.redirect("/management/myinfo");
-});
-
-/*관리->계정관리->이메일 수정*/
-router.get('/management/myinfo/set_email', function(req, res, next) {
-  res.render('management/myinfo/set_email');
-});
-
-router.post('/management/myinfo/set_email', function(req, res, next) {
-  var body = req.body;
-  sql = "UPDATE User SET email = '"+ body.email +"' WHERE user_index = " + String(userID) ;
-  connection.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log(result.affectedRows + " record(s) updated");
-  });
-  res.redirect("/management/myinfo");
-});
+// /*관리->계정관리->필명 수정*/
+// router.get('/management/myinfo/set_writer', function(req, res, next) {
+//   res.render('management/myinfo/set_writer');
+// });
+// router.post('/management/myinfo/set_writer', function(req, res, next) {
+//   var body = req.body;
+//   sql = "UPDATE User SET NickName = '"+ body.name +"' WHERE user_index = " + String(userID) ;
+//   connection.query(sql, function (err, result) {
+//     if (err) throw err;
+//     console.log(result.affectedRows + " record(s) updated");
+//   });
+//   res.redirect("/management/myinfo");
+// });
 
 
-/*관리->구독관리*/
-router.get('/management/subscribe', function(req, res, next) {
-  res.render('management/subscribe');
-});
-// SELECT COUNT (*) as count FROM Buy;
-/*관리->구독관리->구독내역 조회*/
-router.get('/management/subscribe/history', function(req, res, next) {
-  console.log(userID)
-  sql = "SELECT * FROM Buy WHERE user_index = " + String(userID) + ";SELECT COUNT (*) as count FROM Buy WHERE user_index = " + String(userID) +";" ;
-  connection.query(sql,function(err, result, fields){
-    if(!result){
-      res.render('alert', {message : 'no history'}); 
-    }
-  obj = 
-  {print: result};
-  console.log(result);
-  res.render('management/subscribe/history', obj);               
-  });
-});
+// /*관리->계정관리->서재명 수정*/
+// router.get('/management/myinfo/set_shelf', function(req, res, next) {
+//   res.render('management/myinfo/set_shelf');
+// });
+// router.post('/management/myinfo/set_shelf', function(req, res, next) {
+//   var body = req.body;
+//   sql = "UPDATE User SET libraryName = '"+ body.name +"' WHERE user_index = " + String(userID) ;
+//   connection.query(sql, function (err, result) {
+//     if (err) throw err;
+//     console.log(result.affectedRows + " record(s) updated");
+//   });
+//   res.redirect("/management/myinfo");
+// });
+
+// /*관리->계정관리->서재설명 수정*/
+// router.get('/management/myinfo/set_description', function(req, res, next) {
+//   res.render('management/myinfo/set_description');
+// });
+// router.post('/management/myinfo/set_description', function(req, res, next) {
+//   var body = req.body;
+//   sql = "UPDATE User SET libraryDescription = '"+ body.description +"' WHERE user_index = " + String(userID) ;
+//   connection.query(sql, function (err, result) {
+//     if (err) throw err;
+//     console.log(result.affectedRows + " record(s) updated");
+//   });
+//   res.redirect("/management/myinfo");
+// });
+
+// /*관리->계정관리->핸드폰 번호 수정*/
+// router.get('/management/myinfo/set_phone', function(req, res, next) {
+//   res.render('management/myinfo/set_phone');
+// });
+
+// router.post('/management/myinfo/set_phone', function(req, res, next) {
+//   var body = req.body;
+//   sql = "UPDATE User SET PhoneNumber = '"+ body.phone +"' WHERE user_index = " + String(userID) ;
+//   connection.query(sql, function (err, result) {
+//     if (err) throw err;
+//     console.log(result.affectedRows + " record(s) updated");
+//   });
+//   res.redirect("/management/myinfo");
+// });
+
+// /*관리->계정관리->이메일 수정*/
+// router.get('/management/myinfo/set_email', function(req, res, next) {
+//   res.render('management/myinfo/set_email');
+// });
+
+// router.post('/management/myinfo/set_email', function(req, res, next) {
+//   var body = req.body;
+//   sql = "UPDATE User SET email = '"+ body.email +"' WHERE user_index = " + String(userID) ;
+//   connection.query(sql, function (err, result) {
+//     if (err) throw err;
+//     console.log(result.affectedRows + " record(s) updated");
+//   });
+//   res.redirect("/management/myinfo");
+// });
+
+
+// /*관리->구독관리*/
+// router.get('/management/subscribe', function(req, res, next) {
+//   res.render('management/subscribe');
+// });
+// // SELECT COUNT (*) as count FROM Buy;
+// /*관리->구독관리->구독내역 조회*/
+// router.get('/management/subscribe/history', function(req, res, next) {
+//   console.log(userID)
+//   sql = "SELECT * FROM Buy WHERE user_index = " + String(userID) + ";SELECT COUNT (*) as count FROM Buy WHERE user_index = " + String(userID) +";" ;
+//   connection.query(sql,function(err, result, fields){
+//     if(!result){
+//       res.render('alert', {message : 'no history'}); 
+//     }
+//   obj = 
+//   {print: result};
+//   console.log(result);
+//   res.render('management/subscribe/history', obj);               
+//   });
+// });
 
 /*GET event page*/
 router.get('/event', function(req, res, next) {
-  
-    var uid = req.session.userID;
+  if(!req.session.userID) res.redirect('user/login');
+  else{
+   var uid = req.session.userID;
     var eid = req.param("eid");
 
     sql = 
     "SELECT * FROM Event WHERE '"+eid+"'=event_id;"
-    + "SELECT t2.nickName, t1.* FROM (SELECT * FROM Comment WHERE event_id ="+eid+" AND is_deleted !=1) t1\
+    + "SELECT t2.nickName, t1.*, date_format(datetime, '%Y-%m-%d') AS pubDate \
+      FROM (SELECT * FROM Comment WHERE event_id ="+eid+" AND is_deleted=0) t1\
       LEFT JOIN (SELECT * FROM User) t2\
       ON t1.user_index = t2.user_index;"
     ;
     connection.query(sql, function(err, query, fields){
-      if (err) throw err;
+      if (err) {
+        console.log("IN EVENT");
+        console.log(err);
+      }
       else{
         console.log(query);
         obj = {
@@ -383,20 +432,39 @@ router.get('/event', function(req, res, next) {
         res.render('event',obj);
       }
     });
+  }
 });
-router.post('/event', function(req, res, next){
-  var body = req.body;
+router.post('/event/addComment', function(req, res, next){
+  userID = req.session.userID;
+  var comment = req.body.comment;
+  var eid = req.body.eid;
   sql = 
   "INSERT INTO Comment (user_index, event_id, datetime, content)\
-  VALUES("+String(userID)+","+event_id+",NOW(),'"+body.comment+"');"
-  ;
-  connection.query(sql, function(err, result){
-    if (err) throw err;
+  VALUES(?,?,NOW(),?);";
+  connection.query(sql,[uid, eid, comment ], function(err, result){
+    if (err){
+      console.log("IN ADD EVENT");
+      console.log(err);
     console.log(result.affectedRows + " record(s) updated");
+    }
   });
-  res.redirect("/event");
+  res.redirect("/event?eid="+eid);
 });
 
+router.post('/event/deleteComment', function(req, res, next){
+  userID = req.session.userID;
+  var eid = req.param("eid");
+  var cid = req.body.del_cid;
+  console.log(cid);
+  sql = "UPDATE Comment SET is_deleted=1 WHERE comment_id= ? AND user_index=?;";
+  connection.query(sql,[cid,userID], function(err, result){
+    if (err){
+      console.log("IN DELETE EVENT");
+      console.log(err);
+    }
+  });
+  res.redirect("/event?eid="+eid);
+});
 // /*관리->구독관리->구독취소*/
 // router.get('/management/subscribe/autopay', function(req, res, next) {
 //   var sql = "SELECT MAX (Index) FROM Buy;";
@@ -416,12 +484,126 @@ router.post('/event', function(req, res, next){
 //   });
 // });
 
+//로그인 확인 후 1.ejs 렌더링
+// router.get('/', function(req, res, next) {
+//   // userID = req.session.userID;
+//   if(!userID) res.redirect('user/login');
+//   res.render('management/hanna');
+// });
+
+//알람 - 유저에게 알람 보내기
+// router.get('/management/hanna/alarm_set', function(req, res, next) {
+//   console.log(req);
+//   res.render('management/hanna/alarm_set');
+// });
+
+// router.post('/management/hanna/alarm_set', function(req, res, next) {
+// var body = req.body;
+// sql = "INSERT INTO Alarm (user_index, content, datetime) VALUES("+body.user+", '"+body.content+"', NOW());";
+// connection.query(sql, function (err, result) {
+//   if (err) throw err;
+//   console.log(result.affectedRows + " record(s) updated");
+// });
+// res.redirect('/management/hanna');
+// });
+
+//알람 - 유저의 알람 보기
+// router.get('/management/hanna/alarm', function(req, res, next) {
+//   sql = "SELECT * FROM Alarm WHERE " + "'" + userID + "' = user_index";
+//   connection.query(sql,function(err, result, fields){
+//     if (err) throw err;
+//     if (!result) res.render('alert', {message : 'no alarm'});
+//     else{
+//       obj = {print : result};
+//       console.log(obj);
+//       res.render('management/hanna/alarm', obj);  
+//     }
+//   });
+// });
 
 
+// router.get('/management/hanna/alarm_delete', function(req, res, next) {
+//   var aid =  req.param("aid");
+//   sql = "DELETE FROM Alarm WHERE '" + aid + "' = alarm_id;"
+//   connection.query(sql, function(err, result, fields){
+//     if (err) throw err;
+//     else {
+//       res.redirect('alarm');
+//     }
+//   });
+// });
 
 
+router.get('/management/hanna/interest_set', function(req, res, next) {
+  console.log(req);
 
+  sql = 
+  "SELECT t1.UIC_id, t2.content, t2.category_id FROM \
+  	(SELECT * FROM User_Interest_Category WHERE user_index = "+userID+") t1\
+    LEFT JOIN (SELECT * FROM Category) t2\
+    ON t1.category_id=t2.category_id;";
+  connection.query(sql,function(err, result, fields){
+    if (err) throw err;
+    else{
+      obj = {print : result};
+      console.log(obj);
+      res.render('management/hanna/interest_set', obj);  
+    }
+  });
+});
 
+router.post('/management/hanna/interest_set', function(req, res, next) {
+  var body = req.body;
+  sql = "INSERT INTO User_Interest_Category (user_index, category_id)\
+    VALUES("+userID+",(SELECT category_id FROM Category WHERE content = '"+body.category+"' AND type=3))";
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect('/management/hanna/interest_set');
+  });
+
+router.get('/management/hanna/interest_delete', function(req, res, next) {
+  var iid =  req.param("iid");
+  sql = "DELETE FROM User_Interest_Category WHERE '" + iid + "' = UIC_id;"
+  connection.query(sql, function(err, result, fields){
+    if (err) throw err;
+    else {
+      res.redirect('interest_set');
+    }
+  });
+});
+
+router.get('/management/hanna/interest_bookpost', function(req, res, next){
+  sql = 
+  "SELECT t4.book_id, t4.writer, t4.publisher, t4.title\
+	FROM (SELECT DISTINCT t2.book_category_id\
+		FROM (SELECT * FROM User_Interest_Category WHERE user_index = "+userID+") t1\
+		LEFT JOIN (SELECT * FROM Interest_Book) t2\
+		ON t1.category_id = t2.interest_category_id) t3\
+    LEFT JOIN (SELECT * FROM Book) t4\
+    ON t3.book_category_id = t4.book_category_id\
+    ORDER BY like_count DESC, year DESC LIMIT 5;"
+  +"SELECT t3.post_id, t3.user_index, t3.title, t4.nickName, t3.datetime\
+    FROM (SELECT * FROM (SELECT category_id FROM User_Interest_Category WHERE user_index = "+userID+") t1\
+      LEFT JOIN (SELECT * FROM Post) t2\
+      ON t1.category_id = t2.interest_category_id\
+      ORDER BY datetime DESC LIMIT 5) t3\
+    LEFT JOIN (SELECT * FROM User) t4\
+    ON t3.user_index=t4.user_index;";
+  connection.query(sql,function(err, result, fields){
+    if (err) throw err;
+    if (!result) res.render('alert', {message : 'no book and post. check your interest'});
+    else{
+      obj = {
+        book : result[0],
+        post : result[1]
+      };
+      console.log(obj);
+      res.render('management/hanna/interest_bookpost', obj);  
+    }
+  });
+});
 
 
 

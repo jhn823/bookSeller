@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>인용문 수정</title>
+</head>
+<body>
+    <h1>인용문 수정</h1>
+    <hr>
+    <form action="/management/subscribe/set_quote" method="POST">
+        <table>
+            <tr>
+                <td><%= quotes[0].title %></td>
+                <td><input style="width:1000px; height:30px" type="text" name="content" value="<%= quotes[0].content %>"></td>
+            </tr>
+        </table>
+        <button name="qid" value=<%= quotes[0].quotation_id %>>확인</button>
+    </form>
+</body>
+</html>

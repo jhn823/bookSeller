@@ -6,13 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>서재공개 수정</h1>
+    <h1>비밀번호 수정</h1>
     <hr>
-    <form action="/management/myinfo/set_open" method="POST">
+    <form action="/management/myinfo/set_pw" method="POST">
         <table>
             <tr>
-                <input type="radio" name="open" value=1> 공개<br>
-                <input type="radio" name="open" value="0"> 비공개<br>
+                <td><input type="text" name="name" placeholder="비밀번호"></td>
             </tr>
         </table>
         <input type="submit" value="확인">

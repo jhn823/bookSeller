@@ -19,8 +19,6 @@
     <div>
         <center>
             <div class="book_info">
-            <% link = "http://localhost:3000/book?bid=" + book[0].book_id %>
-            <form action=<%= link %> method="POST" >
             <table>
                 <tr>
                     <th rowspan="5">
@@ -39,13 +37,21 @@
                     <td>출판사</td>
                     <td><%= book[0].publisher %></td>
                 </tr>
+                <% link = "http://localhost:3000/book/bookSubscribe?bid=" + book[0].book_id %>
+                <form action=<%= link %> method="POST" >
+                <tr>
+                    <td>프리미엄 회원 e북 읽기 </td>
+                    <td><button>구독</button></td>
+                </tr>
+                </form>
+                <% link = "http://localhost:3000/book?bid=" + book[0].book_id %>
+                <form action=<%= link %> method="POST" >
                 <tr>
                     <td><p>❤️: <%= book[0].like_count %></p></td>
                     <td><button name="love" value="1">❤️</button></td>
                 </tr>
-                
                 <tr>
-                    <% link = "http://localhost:3000/shelf/bookInShelf?bid=" + book[0].book_id %>
+                    <% link = "http://localhost:3000/book/bookInShelf?bid=" + book[0].book_id %>
                     <td>이 책이 담긴 서재</td>
                     <td><button style="width:30px;"><a href = <%=link %>><%= read_count[0].cnt %></a></button></td>
                 </tr>

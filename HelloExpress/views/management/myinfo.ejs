@@ -15,6 +15,10 @@
             <div class = "column">
                 <table>
                     <tr>
+                        <td><a href="http://localhost:3000/management/myinfo/set_name">이름</a></td>
+                        <td><%=  user[0].name %></td>
+                    </tr>
+                    <tr>
                         <td><a href="http://localhost:3000/management/myinfo/set_writer">필명</a></td>
                         <td><%=  user[0].nickName %></td>
                     </tr>
@@ -25,23 +29,17 @@
                     <tr>
                         <td><a href="http://localhost:3000/management/myinfo/set_description">서재소개</a></td>
                         <td><%= user[0].libraryDescription %></td>
-        
-                    </tr>
-                    <tr>
-                        <td><a href="http://localhost:3000/management/myinfo/set_open">공개여부</a></td>
-                        <% if(user[0].library_visibility == 1){%>
-                            <td>공개</td>
-                        <% }else{%>
-                            <td>비공개</td>
-                        <% } %>
                     </tr>
                     <tr>
                         <td><a href="http://localhost:3000/management/myinfo/set_phone">휴대폰 번호</a></td>
                         <td><%= user[0].phoneNumber %></td>
                     </tr>
                     <tr>
-                        <td><a href="http://localhost:3000/management/myinfo/set_email">이메일 주소</a></td>
+                        <td><a href="http://localhost:3000/management/myinfo/set_email">이메일 아이디</a></td>
                         <td><%= user[0].email %></td>
+                    </tr>
+                    <tr>
+                        <td><a href="http://localhost:3000/management/myinfo/set_pw">비밀번호 변경</a></td>
                     </tr>
                     <tr>
                         <td>

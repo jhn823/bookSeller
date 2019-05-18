@@ -44,7 +44,11 @@ router.get('/', function(req, res, next) {
      " SELECT COUNT (user_index) as count FROM Subscribe WHERE " + "'" + ownerID + "' = user_index;"+ 
      //[2]following count
      " SELECT COUNT (follower_id) as count FROM Subscribe WHERE " + "'" + ownerID + "' = follower_id;"+
-      "SELECT * FROM Post WHERE" + "'" + ownerID + "' = user_index;"+
+    //[3]나의 post 정보 가져오기
+      "SELECT *,t1.title AS c_title, Post.title AS p_title, Post.user_index FROM (SELECT * FROM Post_Category WHERE '" + ownerID + "' = user_index) t1\
+      LEFT JOIN Post\
+      ON t1.post_category_id=Post.post_category_id;"+
+      //[4]내가 구독하는 사람의 post 가져오기
       "SELECT  Post.post_id, Post.title, User.nickName, User.user_index FROM Subscribe INNER JOIN User ON Subscribe.user_index = User.user_index INNER JOIN Post ON Subscribe.user_index = Post.user_index WHERE Subscribe.follower_id = "+"'" +  ownerID+"';"+
       //좋아요 수
       "SELECT COUNT (love_id) as count FROM Love WHERE type='book' AND '" + ownerID + "' = user_index AND  love_status = 1;"+
@@ -127,7 +131,7 @@ router.get('/post/delete', function(req, res, next) {
   connection.query(sql, function(err, result, fields){
     if (err) throw err;
     else {
-      res.redirect('/shelf');
+      res.redirect('/shelf?sid='+'-1');
     }
   });
 
@@ -158,40 +162,33 @@ router.get('/post/delete', function(req, res, next) {
 
 /* GET shelf/post/delete page. */
 router.get('/post/setpost', function(req, res, next) {
-  //ownerID = req.session.ownerID;
+  ownerID = req.session.userID;;//post manage can be done by owner only
   var pid =  req.param("pid");
 
   if(pid==-1){
-    sql = "SELECT * FROM Category WHERE " + "'" + 0 + "' = type;"+
-    "SELECT * FROM Post_Category WHERE '" + ownerID + "' = user_index;";
-
+    sql = "SELECT * FROM Post_Category WHERE '" + ownerID + "' = user_index;";
     connection.query(sql, function(err, result, fields){
       if (err) throw err;
       else {
-      console.log(result)
-      console.log("RR");
     obj = {     info : [{post_id : -1}],
-          book_category : result[0],
-          post_category : result[1]}
-
+          post_category : result}
+      
     res.render('shelf/setpost', obj);
       }
     })
 
   }else{
     sql = "SELECT *  FROM Post WHERE '" + pid + "' = post_id;"+
-    "SELECT * FROM Category WHERE " + "'" + 0 + "' = type;"+
     "SELECT * FROM Post_Category WHERE '" + ownerID + "' = user_index;";
-    
+    console.log(sql);
     connection.query(sql, function(err, result, fields){
       if (err) throw err;
       else {
      
-      console.log("RR");
         obj = {
           info : result[0],
-          book_category : result[1],
-          post_category : result[2]}
+          post_category : result[1]}
+          
           console.log(obj);
           res.render('shelf/setpost', obj);
       }
@@ -205,19 +202,18 @@ router.post('/post/setpost', function(req, res, next) {
   var body = req.body;
 
   var pid =  req.param("pid");
-  res.render('shelf/setpost');
   if(pid==-1){
     connection.query("INSERT INTO Post (user_index, title,contents, post_category_id) VALUES (?,?,?,?)", [
       ownerID, body.title, body.contents, body.user_cate
     ]);
-    return res.redirect('/shelf');
+    res.redirect('/shelf?sid='+'-1');
   }else{
     sql = "UPDATE Post SET  post_category_id = '"+body.user_cate+"'+title = '" + body.title+"', contents = '"+ body.contents +"' WHERE '" + pid + "' = post_id;";
     connection.query(sql, function (err, result) {
       if (err) throw err;
       else{
         console.log(result.affectedRows + " record(s) updated");
-        return res.redirect('/shelf');
+        res.redirect('/shelf?sid='+'-1');
       }
       
     });
@@ -285,8 +281,6 @@ router.get('/libManage/delete', function(req, res, next) {
       res.redirect('/shelf/libManage');
     }
   });
-
-
 });
 
 /* SET category shelf/libManage/delete page. */
@@ -382,16 +376,22 @@ router.get('/post', function(req, res, next) {
   "SELECT t2.nickName, t1.content, t1.datetime\
   FROM (SELECT * FROM Comment WHERE post_id='"+pid+"') t1\
   LEFT JOIN (SELECT * FROM User) t2\
-  ON t1.user_index=t2.user_index;";
+  ON t1.user_index=t2.user_index;"+
+  //[3]관련 태그 보기
+  "SELECT t2.title AS post_title, t1.content AS tag\
+  FROM (SELECT * FROM Post_Tag WHERE post_id = '" +pid +"') t1\
+  LEFT JOIN (SELECT * FROM Post) t2\
+  ON t1.post_id = t2.post_id;";
 
-        connection.query(sql, function(err, result, fields){
+  connection.query(sql, function(err, result, fields){
     if (err) throw err;
     else {
       console.log(result);
       obj = {
           writer : result[0],
           post : result[1],
-          comments : result[2]}
+          comments : result[2],
+          tags : result[3]}
       res.render('shelf/post',obj);
     }
   });

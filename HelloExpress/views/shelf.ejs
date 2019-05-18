@@ -165,8 +165,8 @@
                     <% dlink = "http://localhost:3000/shelf/post/delete?pid=" + mypost.post_id+ "&uid=" +user[0].user_index %>
                     <% setpostlink = "http://localhost:3000/shelf/post/setpost?pid=" + mypost.post_id %>
                         <tr>
-                            <td><%= mypost.c_name %></td>
-                            <td><a href = <%=link %>><%= mypost.title %></a></td>
+                            <td><%= mypost.c_title %></td>
+                            <td><a href = <%=link %>><%= mypost.p_title %></a></td>
                             <% if(mine.value==1){ %>
                                 <td><a href=<%= setpostlink %>>수정</a></td>
                                 <td><a href = <%=dlink %>>삭제</a></td>
