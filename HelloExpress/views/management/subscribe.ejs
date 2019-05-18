@@ -1,30 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kr">
 <head>
     <meta charset="UTF-8">
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <title>Document</title>
+    <link rel='stylesheet' href='/stylesheets/home.css' />
+    <title>도비의 서재</title>
+    <center><h1 class="header">도비의 서재</h1></center>
 </head>
-<body>
-    <h1>구독관리</h1>
-    <hr>
-    <table>
-            <tr>
-                <td><a href="http://localhost:3000/management/subscribe/history">구독내역 조회</a></td>
-            </tr>
-            <tr>
-                <td><a href="http://localhost:3000/management/subscribe/autopay">자동 결제 해지 신청</a></td>
-            </tr>
-            <tr>
-                <td><a href="http://localhost:3000/management/subscribe/alarm">알람 기능</a></td>
-            </tr>
-            <tr>
-                <td><a href="http://localhost:3000/management/subscribe/interest_category">유저 관심 카테고리</a></td>
-            </tr>
-            <tr>
-                <td><a href="http://localhost:3000/management/subscribe/quote">인용문</a></td>
-            </tr>
-        </table>
-       
+<body> 
+    <div class = "main_menu">
+        <center>
+            <% slink = "http://localhost:3000/shelf?sid=" + -1 %>
+            <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
+            </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
+            </h2> <h2 id ="menu"><a href =<%= slink %>>내 서재</a></h2>
+            <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
+        </center>
+    </div> 
+    <hr />
+    <center>
+        <h2>구독 관리</h2>
+        <div class = "column">
+            <table>
+                <tr>
+                    <td><a href="http://localhost:3000/management/subscribe/quote">구독 신청</a></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><a href="http://localhost:3000/management/subscribe/history">구독내역 조회</a></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><a href="http://localhost:3000/management/subscribe/autopay">자동결제 해지</a></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+</center>
 </body>
 </html>
