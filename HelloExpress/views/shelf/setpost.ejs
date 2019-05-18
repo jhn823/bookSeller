@@ -6,42 +6,62 @@
     <title>도비의 서재</title>
 </head>
 <body> 
-    <div class = "main_menu">
-        <center>
-            <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
-            </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
-            </h2> <h2 id ="menu"><a href ="http://localhost:3000/shelf">내 서재</a></h2>
-            <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
-        </center>
-    </div>
-    
+        <div class = "main_menu">
+            <center>
+                <% slink = "http://localhost:3000/shelf?sid=" + -1 %>
+                <h2 id ="menu"><a href ="http://localhost:3000">홈</a>
+                </h2> <h2 id ="menu"><a href ="http://localhost:3000/search">검색</a>
+                </h2> <h2 id ="menu"><a href =<%= slink %>>내 서재</a></h2>
+                <h2 id ="menu"><a href ="http://localhost:3000/management">관리</a></h2>
+            </center>
+        </div>
+
     <hr />
     <div>
         <center>
             <h1>post 작성</h1>
             <hr>
-            <% link = "http://localhost:3000/shelf/post/setpost?pid=" + info[0].post_id %>
-            <% pid = info[0].post_id %>
+            <% post_id = info[0].post_id %>
+            <% link = "http://localhost:3000/shelf/post/setpost?pid="+post_id  %>
+
             <form action=<%= link %> method="POST" >
                 <table>
-                    <% if(pid==-1){%>
+                    <% if(post_id==-1){%>
                     <tr>
-                        <td><input type="text" name="title" placeholder="제목"></td>
+                        <td colspan="2">제목<input name="title"  type="text" ></input></td>
                     </tr>
                     <tr>
-                        <td><textarea name="contents"></textarea></td>
+                        <td colspan="2">내용<input name="contents"  type="text" ></input></td>
                     </tr>
                     <% }else{ %>
                     <tr>
-                            <td><textarea name="title"><%= info[0].title %></textarea></td>
+                        <td>이전 제목 : <%= info[0].title %></td>
+                        <td>제목<input name="title"  type="text" ></input></td>
                     </tr>
                     <tr>
-                        <td><textarea name="contents"><%= info[0].contents %></textarea></td>
+                        <td>이전 내용 : <%= info[0].contents %></td>
+                        <td>내용<input name="contents"  type="text" ></input></td>
                     </tr>
                     <% } %>
+                    <tr>
+                        <td>포스트 카테고리 
+                        </td>
+                        <td>[
+                            <% post_category.forEach(function(cate) { %>
+                                <span><%= cate.post_category_id %> :<%= cate.title %> &nbsp;&nbsp;</span>
+                            <% }) %>
+                        ]</td>
+                    </tr>  
+                    <tr>
+                        <td>책 카테고리 번호 입력&nbsp;</td>
+                        <td><input name="post_cate"  type="text" ></td></input>
+                    </tr>
+
+
                 </table>
                 <input type="submit" value="확인">
             </form>
+            
         </center>
     </div>
 

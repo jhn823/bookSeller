@@ -22,6 +22,24 @@
         <center>
             <div class = "header">
                 <h2><%= user[0].libraryName %></h2>
+                <% if(mine.value==0){ %>
+                    <% ing = 0 %>
+                    <% follower_n.forEach(function(following) { %>
+                        <% if(me.user_index == following.user_index){ %>
+                               <% ing = 1 %> 
+                        <% } %>
+                    <% }) %>
+                    <% if(ing == 0){ %>
+                        <% link = "http://localhost:3000/shelf/subscribe?oid="+user[0].user_index; %>
+
+                        <p><a href =<%= link %>>구독하기🙌🏼</a></p>
+                    <% }else{ %>
+                        <% ulink = "http://localhost:3000/shelf/unsubscribe?oid="+user[0].user_index; %>
+
+                        <p><a href =<%= ulink %>>구독취소🙌🏼</a></p>
+                    <% } %>
+
+                <% } %>
                 <div class = "left">
                     <p>필명 : <%= user[0].nickName %></p>
                     <p>구독자 : <%= follower[0].count %> 구독중 : <%= following[0].count %> </p>
@@ -42,6 +60,52 @@
                     </tr>
                 </table>
             </div>
+
+            <div class ="books">
+                    <h2>구독자, 구독중👏</h2>
+                    <div class ="column">
+                        <h4>구독중</h4>
+                        <% following_n.forEach(function(following) { %>
+                            <span><%= following.nickName %>&nbsp</span>
+                    <% }) %>
+                        <h4>구독자</h4>
+                            <% follower_n.forEach(function(following) { %>
+                                <span><%= following.nickName %>&nbsp</span>
+                        <% }) %>
+                    </div>
+                </div>
+
+                <div class ="books">
+                        <h2>읽은책, 좋아요, 인용문👏</h2>
+                        <h4>읽은책</h4>
+                        <div class ="column">
+                            
+                                <% reads.forEach(function(book) { %>
+                                    <tr>
+                                        <td><div class = "list2"><%=book.title%>&nbsp</div></td>
+                                    </tr>                                  
+                                <% }) %>
+                        </div>
+                        <h4>좋아요한 책</h4>
+                        <div class ="column">
+                            
+                                <% loves.forEach(function(book) { %>
+                                    <tr>
+                                        <td><div class = "list2"><%=book.title%>&nbsp</div></td>
+                                    </tr>                                  
+                                <% }) %>
+                        </div>
+                        <h4>인용문을 사용한 책</h4>
+                        <div class ="column">
+                            
+                                <% quotes.forEach(function(book) { %>
+                                    <tr>
+                                        <td><div class = "list2"><%=book.title%>&nbsp</div></td>
+                                    </tr>                                  
+                                <% }) %>
+                        </div>
+                    </div>
+
             <!--버튼으로 눌려서 페이지 바꾸는게 어려워서 그냥 하나에 쭉 나열하도록 할게요-->
             <div class ="books">
                 <h2>대여중인 도서👏</h2>
@@ -55,6 +119,8 @@
                 <% }) %>
                 </div>
             </div>
+
+            
 
         <div class="shelf">
             <h2>📕서재📚</h2>
@@ -88,6 +154,7 @@
             <div class ="column">
                 <table>
                     <tr>
+                        <th>카테고리</th>
                         <th>서평제목</th>
                         <% if(mine.value==1){ %>
                             <th colspan ="2">관리</th>
@@ -98,7 +165,8 @@
                     <% dlink = "http://localhost:3000/shelf/post/delete?pid=" + mypost.post_id+ "&uid=" +user[0].user_index %>
                     <% setpostlink = "http://localhost:3000/shelf/post/setpost?pid=" + mypost.post_id %>
                         <tr>
-                            <td><a href = <%=link %>><%= mypost.title %></a></td>
+                            <td><%= mypost.c_title %></td>
+                            <td><a href = <%=link %>><%= mypost.p_title %></a></td>
                             <% if(mine.value==1){ %>
                                 <td><a href=<%= setpostlink %>>수정</a></td>
                                 <td><a href = <%=dlink %>>삭제</a></td>
