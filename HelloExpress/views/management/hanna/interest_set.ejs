@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Document</title>
+</head>
+<body>
+    <center>
+        <h1>내 관심사 설정하기</h1>
+        <hr>
+        <p> 다음 중에서 골라서 입력하세요 </p>
+        <p> 시, 소설, 에세이, 평론/서평, 문학, 자기계발, 경제/경영, 교육, 실용/취미, 역사, 철학, 과학 </p>
+        <p> 사회, 정치, 종교, 판타지, 미스터리, 스릴러, SF, 로맨스, 음악, 미술, 공연, 요리, 리빙, IT/테크, 외국어</p>
+        <form action="/management/hanna/interest_set" method="POST">
+            <table>
+                <tr>
+                    <td><input type="text" name="category" placeholder="카테고리 이름"></td>
+                </tr>
+            </table>
+            <input type="submit" value="확인">
+        </form>
+        <br><br>
+    
+        <h1>내 관심사 확인하기</h1>
+        <hr>
+        <table>
+                <tr>
+                    <th>관심사</th>
+                    <th>삭제</th>
+                </tr>
+                <tr>
+                    <td>
+                        <% print.forEach(function(print) { %>
+                            <% dlink = "http://localhost:3000/management/hanna/interest_delete?iid=" + print.UIC_id %>
+                            <tr><td><%= print.content %></td>
+                            <td><a href = <%=dlink %>>삭제</a></td>
+                            <% }) %>
+                    </td>
+            </tr>
+            </table>
+    </center>
+</body>
+</html>
