@@ -44,12 +44,13 @@
                     <td><button>구독</button></td>
                 </tr>
                 </form>
-                <% link = "http://localhost:3000/book?bid=" + book[0].book_id %>
+                <% link = "http://localhost:3000/book/bookLove?bid=" + book[0].book_id %>
                 <form action=<%= link %> method="POST" >
                 <tr>
                     <td><p>❤️: <%= book[0].like_count %></p></td>
-                    <td><button name="love" value="1">❤️</button></td>
+                    <td><button>❤️</button></td>
                 </tr>
+                </form>
                 <tr>
                     <% link = "http://localhost:3000/book/bookInShelf?bid=" + book[0].book_id %>
                     <td>이 책이 담긴 서재</td>
@@ -58,10 +59,9 @@
                 </table>
           
             </div>
-    
+            <% link = "http://localhost:3000/book/tagLove?bid=" + book[0].book_id %>
+            <form action=<%= link %> method="POST" >
                 <h2>감성 태그 픽</h2>
-               
-                
                 <div class ="column">
                     <div class = "tag">
                         <% tag.forEach(function(tags) { %>
@@ -72,30 +72,34 @@
                 </div>  
                 <h4>나의 관심 태그</h4>
                 <div class ="column">
-                        <div class = "tag">
-                            <% love_tags.forEach(function(love_tag) { %>
-                            <button name="tagID" value="<%= love_tag.book_tag_id %>" style="background-color: #fdd3ce">#<%= love_tag.content %></button>
-                            <% }) %>
-                        </div>
-                
-                    </div>
-                <h4>내가 작성한 태그</h4>
-                <div class ="column">
-                        <div class = "tag">
-                            <% my_tags.forEach(function(my_tag) { %>
-                            <button name="tagID" value="<%= my_tag.book_tag_id %>" style="background-color: #fba69d">#<%= my_tag.content %></button>
-                            <button name="delTag" value="<%= my_tag.book_tag_id %>">X</button></br>
-                            <% }) %>
-                        </div>
-
-                    </div>    
-                <!--create new tag-->
-                <div class ="column">
                     <div class = "tag">
-                        #<input type="text" name="new_tag" placeholder="이 책에 대한 나만의 #감성 태크를 달아주세요 " style="width:300px; padding:5px">
+                        <% love_tags.forEach(function(love_tag) { %>
+                        <button name="tagID" value="<%= love_tag.book_tag_id %>" style="background-color: #fdd3ce">#<%= love_tag.content %></button>
+                        <% }) %>
                     </div>
-                </div>  
-                </form>                              
+                </div>
+            </form>
+            <% link = "http://localhost:3000/book/delTag?bid=" + book[0].book_id %>
+            <form action=<%= link %> method="POST" >
+            <h4>내가 작성한 태그</h4>
+            <div class ="column">
+                    <div class = "tag">
+                        <% my_tags.forEach(function(my_tag) { %>
+                        <button name="tagID" value="<%= my_tag.book_tag_id %>" style="background-color: #fba69d">#<%= my_tag.content %></button>
+                        <button name="delTag" value="<%= my_tag.book_tag_id %>">X</button></br>
+                        <% }) %>
+                    </div>
+                </div>   
+            </form> 
+                <% link = "http://localhost:3000/book/newTag?bid=" + book[0].book_id %>
+                <form action=<%= link %> method="POST" >
+            <!--create new tag-->
+            <div class ="column">
+                <div class = "tag">
+                    #<input type="text" name="new_tag" placeholder="이 책에 대한 나만의 #감성 태크를 달아주세요 " style="width:300px; padding:5px">
+                </div>
+            </div>  
+            </form>                              
             <h2>이 저자, 역자의 다른 도서</h2>
             <div class ="column">
                 <% top_equ_writers.forEach(function(book) { %>

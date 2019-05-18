@@ -15,7 +15,7 @@ var connection = mysql.createConnection({
 
 var obj = {};
 
-var userID =-1;
+var userID = -1;
 var bookID ;
 
 /* book page */
@@ -24,20 +24,7 @@ router.get('/', function(req, res, next) {
   else{
   userID = req.session.userID;
   bookID = req.param("bid");
-  var pid;
-  /*var test="SELECT * FROM Post WHERE user_index=2 AND title='ㅈㅎ' AND contents='ㅈㅎㅈㅎ2'";
-  connection.query(test, function(err, query, fields){
-    console.log("test------");
-    console.log(query[0].post_id);
-    pid= query[0].post_id;
-    console.log(pid);
-    console.log("-----------")
-    if(err){
-      console.log("test에 오류가 있습니다.");
-      console.log(err);
-    } 
 
-  });*/
   sql = 
   //book 정보 -query[0]
   "SELECT * FROM Book WHERE book_id='" + bookID + "';"+
@@ -94,160 +81,164 @@ router.get('/', function(req, res, next) {
   });  
   }
 });
-router.post('/', function(req, res, next) {
-  var love = req.body.love;
+
+// new tag create
+router.post('/newTag', function(req, res, next) {
   var new_tag = req.body.new_tag;
-  var tag_ID = req.body.tagID;
-  var del_tagID = req.body.delTag;
-  var query;
   userID = req.session.userID;
   bookID = req.param("bid");
+  var query;
 
-
-  // new tag create
-  if(!(new_tag==='') && new_tag != null){
-    sql =  "SELECT COUNT(*) AS count FROM Book_Tag WHERE book_id = "+String(bookID)+" AND user_index="+String(userID)+" AND is_deleted = 0;";
-    connection.query(sql, function(err, sql, fields){
-      if(err){
-        console.log(err);
-      } 
-      else if(sql[0].count >=3){
-        res.render('alert', {message : '태그는 3개까지 작성할 수 있습니다.'}); 
-      }
-      else{
-        query = "INSERT INTO Book_Tag (content,book_id,user_index ) VALUES ('"+new_tag+"',"+bookID+","+userID+");";
-        connection.query(query, function (err, result) {
-          if(err){
-            console.log("new_tag 쿼리문에 오류가 있습니다.");
-            console.log(err);
-          }
-          res.redirect("/book?bid="+String(bookID));
-        }); 
-      }
-
-    });
-  }
-
-    //책 좋아요
-    if((new_tag==='') && love==='1'){
-      connection.query("SELECT * FROM Love WHERE type='book' AND book_id=" + String(bookID) + " AND user_index=" + String(userID),
-      function(err, result, fields){
+  sql =  "SELECT COUNT(*) AS count FROM Book_Tag WHERE book_id = "+String(bookID)+" AND user_index="+String(userID)+" AND is_deleted = 0;";
+  connection.query(sql, function(err, sql, fields){
+    if(err){
+      console.log(err);
+    } 
+    else if(sql[0].count >=3){
+      res.render('alert', {message : '태그는 3개까지 작성할 수 있습니다.'}); 
+    }
+    else{
+      query = "INSERT INTO Book_Tag (content,book_id,user_index ) VALUES ('"+new_tag+"',"+bookID+","+userID+");";
+      connection.query(query, function (err, result) {
         if(err){
-          console.log("쿼리문에 오류가 있습니다.");
+          console.log("new_tag 쿼리문에 오류가 있습니다.");
           console.log(err);
         }
-        else if( result.length > 0 && result ){
-          console.log(result[0].love_status == 1);
-          if( result[0].love_status == 1){ // 좋아요 취소
-            console.log("좋아요 취소 toggle");
-            sql = "UPDATE Love SET love_status = 0 WHERE (type='book' AND user_index = "+String(userID)+" AND book_id = "+String(bookID)+");\
-            UPDATE Book Set like_count=like_count - 1 WHERE book_id = "+String(bookID);
-          }
-            else{ // 좋아요  
-            console.log("좋아요 toggle");
-            sql = "UPDATE Love SET love_status = 1 WHERE (type='book' AND user_index = "+String(userID)+" AND book_id = "+String(bookID)+");\
-            UPDATE Book Set like_count=like_count + 1 WHERE book_id = "+String(bookID);
-          }
-            connection.query(sql,
+        res.redirect("/book?bid="+String(bookID));
+      }); 
+    }
+  });
+});
+//태그 삭제
+router.post('/delTag', function(req, res, next) {
+  userID = req.session.userID;
+  bookID = req.param("bid");
+  var del_tagID = req.body.delTag;
+  sql = "UPDATE Book_Tag SET is_deleted=1 WHERE (book_tag_id="+String(del_tagID)+" AND user_index="+String(userID)+");"+
+  "UPDATE Love SET love_status = 0 WHERE (book_tag_id="+String(del_tagID)+" AND user_index="+String(userID)+");";
+  connection.query(sql, function (err, result) {
+    console.log(err);
+    console.log(result);
+    if (err) {
+      console.log("del_tagID 쿼리에 문제가 있습니다.");
+      console.log(err);
+    }
+    res.redirect("/book?bid="+String(bookID));
+  });
+
+});
+
+//태그 좋아요
+router.post('/tagLove', function(req, res, next) {
+  userID = req.session.userID;
+  bookID = req.param("bid");
+  var tag_ID = req.body.tagID;
+  var query;
+  query= "SELECT COUNT(Book_Tag.book_tag_id) AS count FROM Book_Tag \
+  LEFT JOIN Love \
+  ON Book_Tag.book_tag_id=Love.book_tag_id AND Book_Tag.book_id=Love.book_id\
+  WHERE (Love.type='tag' AND Love.book_id="+String(bookID)+" AND Love.user_index="+String(userID)+" AND love_status=1);";
+
+  connection.query("SELECT * FROM Love WHERE type='tag' AND book_id=" + String(bookID) + " AND book_tag_id="+String(tag_ID)+" AND user_index=" + String(userID),
+  function(err, result, fields){
+    if(err){
+      console.log("tag 좋아요 쿼리문에 오류가 있습니다.");
+      console.log(err);
+    }
+    else if( result.length > 0 && result ){  // 좋아요 tuple이 존재.
+      if( result[0].love_status == 1){ // 좋아요 취소로 toggle
+        console.log("태그 좋아요 취소 toggle");
+        sql = "UPDATE Love SET love_status = 0 WHERE (user_index = "+String(userID)+" AND book_id = "+String(bookID)+" AND book_tag_id="+String(tag_ID)+");";
+        connection.query(sql,
           function(err, result, fields){
+            console.log("태그 좋아요 취소 connet");
             console.log(err, result);
             res.redirect("/book?bid="+String(bookID));
-          }) 
-        }
-        else{
-          console.log("좋아요 생성");
-          sql = "INSERT INTO Love (`type`, `user_index`, `book_id`) VALUES ('book', "+String(userID)+", "+String(bookID)+");\
-          UPDATE Book Set like_count = like_count + 1 WHERE book_id = "+String(bookID);
-          connection.query(sql,
-          function(err, result, fields){
-            res.redirect("/book?bid="+String(bookID));
-          })
-          console.log(err, sql);
-        }
-      });
+          })  
       }
-  if(tag_ID > 0 && new_tag===''){
-    query= "SELECT COUNT(Book_Tag.book_tag_id) AS count FROM Book_Tag \
-    LEFT JOIN Love \
-    ON Book_Tag.book_tag_id=Love.book_tag_id AND Book_Tag.book_id=Love.book_id\
-    WHERE (Love.type='tag' AND Love.book_id="+String(bookID)+" AND Love.user_index="+String(userID)+" AND love_status=1);";
+      else{ // 좋아요로 toggle 
 
-    connection.query("SELECT * FROM Love WHERE type='tag' AND book_id=" + String(bookID) + " AND book_tag_id="+String(tag_ID)+" AND user_index=" + String(userID),
-    function(err, result, fields){
-      if(err){
-        console.log("tag 좋아요 쿼리문에 오류가 있습니다.");
-        console.log(err);
-      }
-      else if( result.length > 0 && result ){  // 좋아요 tuple이 존재.
-        if( result[0].love_status == 1){ // 좋아요 취소로 toggle
-          console.log("태그 좋아요 취소 toggle");
-          sql = "UPDATE Love SET love_status = 0 WHERE (user_index = "+String(userID)+" AND book_id = "+String(bookID)+" AND book_tag_id="+String(tag_ID)+");";
-          connection.query(sql,
-            function(err, result, fields){
-              console.log("태그 좋아요 취소 connet");
-              console.log(err, result);
-              res.redirect("/book?bid="+String(bookID));
-            })  
-        }
-        else{ // 좋아요로 toggle 
-
-          connection.query(query, function(err, query, fields){
-            if(err){
-              console.log(err);
-            } 
-            else if(query[0].count >=3){
-              res.render('alert', {message : '관심 태그는 3개까지 설정할 수 있습니다.'}); 
-            }
-            else{
-              sql = "UPDATE Love SET love_status = 1 WHERE (user_index = "+String(userID)+" AND book_id = "+String(bookID)+" AND book_tag_id="+String(tag_ID)+");"; 
-              connection.query(sql,
-                function(err, result, fields){
-                  console.log("태그 좋아요 connet");
-                  console.log(err, result);
-                  res.redirect("/book?bid="+String(bookID));
-                })   
-            }
-          });
-        }
-      }
-      else{ //좋아요 tuple이 존재하지 않음 -> 새로운 tuple 생성
         connection.query(query, function(err, query, fields){
           if(err){
-            console.log("test쿼리문에 오류가 있습니다.");
             console.log(err);
           } 
           else if(query[0].count >=3){
             res.render('alert', {message : '관심 태그는 3개까지 설정할 수 있습니다.'}); 
           }
           else{
-            sql = "INSERT INTO Love (`type`, `user_index`, `book_id`, `book_tag_id`) VALUES ('tag', "+String(userID)+", "+String(bookID)+", "+String(tag_ID)+");";
+            sql = "UPDATE Love SET love_status = 1 WHERE (user_index = "+String(userID)+" AND book_id = "+String(bookID)+" AND book_tag_id="+String(tag_ID)+");"; 
             connection.query(sql,
-            function(err, result, fields){
-              console.log(err,result);
-              res.redirect("/book?bid="+String(bookID));
-            })
+              function(err, result, fields){
+                console.log("태그 좋아요 connet");
+                console.log(err, result);
+                res.redirect("/book?bid="+String(bookID));
+              })   
           }
         });
       }
-      
-    });
-  }
-  if(del_tagID > 0){
-    query = "UPDATE Book_Tag SET is_deleted=1 WHERE (book_tag_id="+String(del_tagID)+" AND user_index="+String(userID)+");"+
-    "UPDATE Love SET love_status = 0 WHERE (book_tag_id="+String(del_tagID)+" AND user_index="+String(userID)+");";
-    connection.query(query, function (err, result) {
-      console.log(err);
-      console.log(query);
-      console.log(result);
-      if (err) {
-        console.log("del_tagID 쿼리에 문제가 있습니다.");
-        console.log(err);
-      }
-      res.redirect("/book?bid="+String(bookID));
-    });
-  }
+    }
+    else{ //좋아요 tuple이 존재하지 않음 -> 새로운 tuple 생성
+      connection.query(query, function(err, query, fields){
+        if(err){
+          console.log("test 쿼리문에 오류가 있습니다.");
+          console.log(err);
+        } 
+        else if(query[0].count >=3){
+          res.render('alert', {message : '관심 태그는 3개까지 설정할 수 있습니다.'}); 
+        }
+        else{
+          sql = "INSERT INTO Love (`type`, `user_index`, `book_id`, `book_tag_id`) VALUES ('tag', "+String(userID)+", "+String(bookID)+", "+String(tag_ID)+");";
+          connection.query(sql,
+          function(err, result, fields){
+            console.log(err,result);
+            res.redirect("/book?bid="+String(bookID));
+          })
+        }
+      });
+    }
+  });
 });
+//책 좋아요
+router.post('/bookLove', function(req, res, next) {
+  userID = req.session.userID;
+  bookID = req.param("bid");
 
+  connection.query("SELECT * FROM Love WHERE type='book' AND book_id=" + String(bookID) + " AND user_index=" + String(userID),
+  function(err, result, fields){
+    if(err){
+      console.log("쿼리문에 오류가 있습니다.");
+      console.log(err);
+    }
+    else if( result.length > 0 && result ){
+      if( result[0].love_status == 1){ // 좋아요 취소
+        console.log("좋아요 취소 toggle");
+        sql = "UPDATE Love SET love_status = 0 WHERE (type='book' AND user_index = "+String(userID)+" AND book_id = "+String(bookID)+");\
+        UPDATE Book Set like_count=like_count - 1 WHERE book_id = "+String(bookID);
+      }
+        else{ // 좋아요  
+        console.log("좋아요 toggle");
+        sql = "UPDATE Love SET love_status = 1 WHERE (type='book' AND user_index = "+String(userID)+" AND book_id = "+String(bookID)+");\
+        UPDATE Book Set like_count=like_count + 1 WHERE book_id = "+String(bookID);
+      }
+        connection.query(sql,
+      function(err, result, fields){
+        console.log(err, result);
+        res.redirect("/book?bid="+String(bookID));
+      }) 
+    }
+    else{
+      console.log("좋아요 생성");
+      sql = "INSERT INTO Love (`type`, `user_index`, `book_id`) VALUES ('book', "+String(userID)+", "+String(bookID)+");\
+      UPDATE Book Set like_count = like_count + 1 WHERE book_id = "+String(bookID);
+      connection.query(sql,
+      function(err, result, fields){
+        res.redirect("/book?bid="+String(bookID));
+      })
+      console.log(err, sql);
+    }
+  });
+});
+//프리미엄 회원 책 구매
 router.post('/bookSubscribe', function(req, res, next) {
   userID = req.session.userID;
   bookID = req.param("bid");
@@ -278,7 +269,7 @@ router.post('/bookSubscribe', function(req, res, next) {
 });
 
 
-/* GET search page. */
+/* 이 책이 담긴 서재. */
 router.get('/bookInShelf', function(req, res, next) {
   var bid=req.param("bid");
   sql = "SELECT b.*, u.*, Book.title FROM Book_Read AS b\
