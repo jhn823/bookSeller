@@ -238,18 +238,27 @@ router.post('/bookLove', function(req, res, next) {
     }
   });
 });
-//프리미엄 회원 책 구매
+//프리미엄 회원 책 구독
 router.post('/bookSubscribe', function(req, res, next) {
   userID = req.session.userID;
   bookID = req.param("bid");
-  sql = "SELECT user_index AS uid FROM User WHERE user_index=? AND is_premium=1";
-  connection.query(sql,[userID],
+  // 프리미엄 회원이고, 이 책이 아직 서재에 없는 고객인지 확인
+  sql = "SELECT u.user_index AS count FROM User AS u \
+  NATURAL JOIN Book_Read AS b \
+  RIGHT JOIN Book ON Book.book_id=b.book_id \
+	WHERE u.user_index=? AND u.is_premium=1 AND b.book_id=? \
+  AND b.return_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 31 DAY);" +
+  "SELECT user_index AS uid FROM User WHERE user_index=? AND is_premium=1";
+  connection.query(sql,[userID, bookID, userID],
     function(err, result) {
     if (err) {
       console.log(err);
     }
-    if ( result.length == 0){
+    if ( result[1].length == 0){
       res.render('alert', {message : '프리미엄 회원만 구독할 수 있습니다.'}); 
+    }
+    else if(result[0].length > 0){
+      res.render('alert', {message : '이미 내 서재에 담긴 책입니다.'}); 
     }
     else{
       query="INSERT INTO Book_Read (book_id, user_index, borrow_date, return_date) \
@@ -260,8 +269,6 @@ router.post('/bookSubscribe', function(req, res, next) {
           console.log("book subscribe 추가에 에러");
           console.log(err);
         }
-        console.log("book subscribe!!!!!!");
-        console.log(result);
         res.redirect("/book?bid="+String(bookID));            
       });
     }
