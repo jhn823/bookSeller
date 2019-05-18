@@ -42,6 +42,22 @@ router.get('/myinfo', function(req, res, next) {
   });
 });
 
+/*관리->계정관리->이름 수정*/
+router.get('/myinfo/set_name', function(req, res, next) {
+  res.render('management/myinfo/set_name');
+});
+
+router.post('/myinfo/set_name', function(req, res, next) {
+  var body = req.body;
+  sql = "UPDATE User SET name = '"+ body.name +"' WHERE user_index = " + String(userID) ;
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect("/management/myinfo");
+});
+
+
 /*관리->계정관리->필명 수정*/
 router.get('/myinfo/set_writer', function(req, res, next) {
   res.render('management/myinfo/set_writer');
@@ -118,6 +134,20 @@ router.post('/myinfo/set_email', function(req, res, next) {
   res.redirect("/management/myinfo");
 });
 
+/*관리->계정관리->비밀번호 수정*/
+router.get('/myinfo/set_pw', function(req, res, next) {
+  res.render('management/myinfo/set_pw');
+});
+
+router.post('/myinfo/set_pw', function(req, res, next) {
+  var body = req.body;
+  sql = "UPDATE User SET password = '"+ body.password +"' WHERE user_index = " + String(userID) ;
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect("/management/myinfo");
+});
 
 /*관리->구독관리*/
 router.get('/subscribe', function(req, res, next) {
@@ -127,7 +157,8 @@ router.get('/subscribe', function(req, res, next) {
 /*관리->구독관리->구독내역 조회*/
 router.get('/subscribe/history', function(req, res, next) {
   console.log(userID)
-  sql = "SELECT * FROM Buy WHERE user_index = " + String(userID) + ";SELECT COUNT (*) as count FROM Buy WHERE user_index = " + String(userID) +";" ;
+  sql = "SELECT date_format(from_date, '%Y-%m-%d') AS fromDate, date_format(to_date, '%Y-%m-%d') AS toDate, amount\
+  FROM Buy WHERE user_index = " + userID + ";";
   connection.query(sql,function(err, result, fields){
     if(!result){
       res.render('alert', {message : 'no history'}); 
@@ -139,33 +170,38 @@ router.get('/subscribe/history', function(req, res, next) {
   });
 });
 
+router.get('/hanna', function(req, res, next) {
+  res.render('management/hanna');
+});
 
-// /*관리->구독관리->구독취소*/
-// router.get('/management/subscribe/autopay', function(req, res, next) {
-//   var sql = "SELECT MAX (Index) FROM Buy;";
-//   connection.query(sql, function(err, result, fields){
-//     if (err) throw err;
-//     console.log(result);
-//     if(!result){
-//       res.render('alert', {message : 'no history'}); 
-//     }
-//     else{   
-//     obj = {print: result};
-//     res.render('management/subscribe/autopay', obj);               
+/*관리->구독관리->구독취소*/
+router.get('/subscribe/autopay', function(req, res, next) {
+  console.log(req);
+  sql = 
+  "SELECT date_format(to_date, '%Y-%m-%d') AS date FROM Buy WHERE user_index = "+userID+" ORDER BY to_date DESC LIMIT 1;"
+  + "SELECT auto FROM User WHERE user_index="+userID+";";
+  connection.query(sql,function(err, result, fields){
+    if (err) throw err;
+    else{
+      obj = {
+        date : result[0],
+        auto : result[1]
+      };
+      console.log(obj);
+      res.render('management/subscribe/autopay', obj);  
+    }
+  });
+});
 
-
-//     }
-
-//   });
-// });
-
-
-
-
-
-
-
-
+router.post('/subscribe/autopay', function(req, res, next) {
+  var body = req.body;
+  sql = "UPDATE User SET auto = '"+ body.autopay +"' WHERE user_index = " + userID ;
+  connection.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log(result.affectedRows + " record(s) updated");
+  });
+  res.redirect("/management/subscribe/autopay");
+});
 
 
 module.exports = router;
