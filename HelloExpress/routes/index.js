@@ -135,25 +135,25 @@ router.get('/', function(req, res, next) {
         LEFT JOIN (SELECT * FROM User) t2 \
         ON t1.user_index = t2.user_index;"
     // [6] column 6 - 월간 차트
-    + "SELECT t1.num, t2.title, t2.writer, t2.publisher \
+    + "SELECT t1.num, t2.book_id, t2.title, t2.writer, t2.publisher \
         FROM ( \
           SELECT book_id, count(*) AS num \
             FROM Book_Read \
             WHERE DATE(borrow_date\
           ) \
-        BETWEEN DATE_ADD(NOW(),INTERVAL -5 MONTH ) AND NOW() \
+        BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND NOW() \
         GROUP BY book_id \
         ORDER BY count(*) DESC LIMIT 10) t1 \
         NATURAL JOIN (SELECT * FROM Book) t2 \
         WHERE t1.book_id = t2.book_id;"
     // [7] column 6 - 주간 차트
-    + "SELECT t1.num, t2.title, t2.writer, t2.publisher \
+    + "SELECT t1.num, t2.book_id, t2.title, t2.writer, t2.publisher \
         FROM ( \
           SELECT book_id, count(*) AS num \
             FROM Book_Read \
             WHERE DATE(borrow_date\
           ) \
-        BETWEEN DATE_ADD(NOW(),INTERVAL -5 WEEK ) AND NOW() \
+        BETWEEN DATE_ADD(NOW(),INTERVAL -1 WEEK ) AND NOW() \
         GROUP BY book_id \
         ORDER BY count(*) DESC LIMIT 10) t1 \
         NATURAL JOIN (SELECT * FROM Book) t2 \
@@ -204,19 +204,31 @@ router.post('/', function(req, res, next){
 
 /* GET search page. */
 router.get('/search', function(req, res, next) {
-  var q =  req.param("q");
-  if (typeof q == "undefined") {
+  var info =  req.param("info");
+  var tag = req.param("tag");
+  if (typeof info == "undefined" && typeof tag == "undefined") {
     res.render('search');
   }
+  else if(typeof tag == "undefined"){
+      sql = "SELECT * FROM Book WHERE (title LIKE '%" + info + "%') OR (writer LIKE '%" + info + "%') OR (publisher LIKE '%" + info + "%');";
+      connection.query(sql, function (err, result, fields) {
+        console.log(result);
+        obj = {
+          book_result: result
+        };
+        res.render('searchResult', obj);
+      });
+  }
   else{
-    sql = "SELECT * FROM Book WHERE (title LIKE '%" + q +"%') OR (writer LIKE '%" + q +"%') OR (publisher LIKE '%" + q +"%');";
-    connection.query(sql, function(err, result, fields){
-      console.log(result);
-      obj={
-        book_result: result
-      };
-      res.render('searchResult', obj);
-    });
+    sql = "SELECT * FROM Book RIGHT JOIN (SELECT book_id FROM Book_Tag WHERE is_deleted=0 AND content LIKE '%"+tag+"%')t2\
+      ON Book.book_id = t2.book_id;";
+      connection.query(sql, function (err, result, fields) {
+        console.log(result);
+        obj = {
+          book_result: result
+        };
+        res.render('searchResult', obj);
+      });
   }
 
 });
