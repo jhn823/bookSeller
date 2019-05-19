@@ -1,0 +1,83 @@
+
+<div class ="column">
+                    <% count =0 %>
+                    <% categorized.forEach(function(book) { %>
+                        <% if(count==0){ %> 
+                            <h3><%= cate.bookshelf_title %></h3>
+                        <% count++ }%>
+
+                        <% if(cate.bookshelf_title == book.bookshelf_title) { %> 
+                        <div class = "list">
+                                <p><%= book.writer %></p>
+                                <p><%= book.title %></p>
+                        </div>
+                    <% } %>
+                <% }) %>
+                </div>
+                <% }) %>
+                
+  #링크 걸기
+                <% followingPosts.forEach(function(followingPost) { %>
+                        <% link = "http://localhost:3000/shelf/post?pid=" + followingPost.post_id + "&uid=" +followingPost.user_index %>
+                            <tr>
+                                <td><a href = <%=link %>> <%= followingPost.title %></a></td>
+                                <td> <a href = <%=link %>> <%= followingPost.nickName %></a></td>
+                            </tr>                                  
+                        <% }) %>
+slink ="http://localhost:3000/shelf?sid=" +
+
+          #로그인 확인
+          if(!req.session.userID) res.redirect('user/login');
+  else{
+    userID = req.session.userID;
+
+
+  <div class ="books">
+                <h2>도서</h2>
+                <div class ="column">
+                    <% love_books.forEach(function(book) { %>
+                    <div class = "list">
+                            <p>한강</p>
+                            <p>소년이 온다</p>
+                        </div>
+                <% }) %>
+                </div>
+            </div>
+
+
+유저에게 알람 보내기
+INSERT INTO Alarm (user_index, content, datetime) VALUES (user_index, "내용", NOW());
+
+유저의 알람 보기
+SELECT * FROM Alarm WHERE user_index=”aaa”;
+
+유저의 알람 삭제하기
+DELETE * FROM Alarm WHERE alarm_id = ‘aaa’;
+
+유저 관심 카테고리 설정
+INSERT INTO User_Interest_Category (user_index, interest_category_id) VALUES (user_index, "111");
+
+유저 관심 카테고리 보기
+SELECT t2.content FROM 
+	(SELECT * FROM User_Interest_Category WHERE user_index = 2) t1
+    	LEFT JOIN (SELECT * FROM Category) t2
+    	ON t1.category_id=t2.category_id;
+
+유저 관심 카테고리 관련된 책(like 많은 순, 최신순) 상위 5개 보기
+SELECT t4.title, t4.book_category_id, t4.like_count, t4.year
+	FROM (SELECT DISTINCT t2.book_category_id
+		FROM (SELECT * FROM User_Interest_Category WHERE user_index = 2) t1
+		LEFT JOIN (SELECT * FROM Interest_Book) t2
+		ON t1.category_id = t2.interest_category_id) t3
+    LEFT JOIN (SELECT * FROM Book) t4
+    ON t3.book_category_id = t4.book_category_id
+    ORDER BY like_count DESC, year DESC LIMIT 5;
+
+유저 관심 카테고리 관련된 포스트 보기 - 작성자, 제목, 시간
+SELECT t3.title, t4.nickName, t3.datetime
+FROM (SELECT * FROM (SELECT category_id FROM User_Interest_Category WHERE user_index = 2) t1
+	LEFT JOIN (SELECT * FROM Post) t2
+	ON t1.category_id = t2.interest_category_id
+	ORDER BY datetime DESC LIMIT 5) t3
+LEFT JOIN (SELECT * FROM User) t4
+ON t3.user_index=t4.user_index;

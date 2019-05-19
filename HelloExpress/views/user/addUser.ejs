@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kr">
 <head>
     <meta charset="UTF-8">
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <title>Document</title>
+    <link rel='stylesheet' href='/stylesheets/home.css' />
+    <title>도비의 서재</title>
+    <center><h1 class="header">도비의 서재</h1></center>
 </head>
+<hr/>
 <body>
+    <center>
     <h1>회원가입하기</h1>
-    <hr>
 <!-- //  connection.query("INSERT INTO User (Name, NickName,LibraryName,Sns,) VALUES (?, ?)", [ -->
     <form action="/user/addUser" method="POST">
         <table>
@@ -31,5 +33,6 @@
         </table>
         <input type="submit" value="회원가입하기">
     </form>
+    </center>
 </body>
 </html>
