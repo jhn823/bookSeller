@@ -46,7 +46,7 @@ router.get('/', function(req, res, next) {
      " SELECT COUNT (follower_id) as count FROM Subscribe WHERE " + "'" + ownerID + "' = follower_id;"+
     //[3]나의 post 정보 가져오기
       "SELECT *,t1.title AS c_title, Post.title AS p_title, Post.user_index FROM (SELECT * FROM Post_Category WHERE '" + ownerID + "' = user_index) t1\
-      LEFT JOIN Post\
+      JOIN Post\
       ON t1.post_category_id=Post.post_category_id;"+
       //[4]내가 구독하는 사람의 post 가져오기
       "SELECT  Post.post_id, Post.title, User.nickName, User.user_index FROM Subscribe INNER JOIN User ON Subscribe.user_index = User.user_index INNER JOIN Post ON Subscribe.user_index = Post.user_index WHERE Subscribe.follower_id = "+"'" +  ownerID+"';"+
@@ -112,7 +112,7 @@ router.get('/', function(req, res, next) {
           follower_n :result[15],
           me : {user_index : userID}
         };
-        console.log(obj);
+        // console.log(obj);
         res.render('shelf',obj);
       }
     })
@@ -137,28 +137,6 @@ router.get('/post/delete', function(req, res, next) {
 
 });
 
-/* GET shelf/post/setpost */
-// router.get('/post/setpost', function(req, res, next) {
-//   //ownerID = req.session.ownerID;
-//   var pid =  req.param("pid");
-
-//   if(pid==-1){
-//     obj = {info : [{pid : -1}]}
-//     res.render('shelf/setpost', obj);
-//   }else{
-//     sql = "SELECT *  FROM Post WHERE '" + pid + "' = post_id;"
-//     connection.query(sql, function(err, result, fields){
-//       if (err) throw err;
-//       else {
-//       console.log(result)
-//         obj = {
-//           info : result}
-//           res.render('shelf/setpost', obj);
-//       }
-//     });
-
-//   }
-// });
 
 /* GET shelf/post/delete page. */
 router.get('/post/setpost', function(req, res, next) {
@@ -166,12 +144,16 @@ router.get('/post/setpost', function(req, res, next) {
   var pid =  req.param("pid");
 
   if(pid==-1){
-    sql = "SELECT * FROM Post_Category WHERE '" + ownerID + "' = user_index;";
+    sql = "SELECT * FROM Post_Category WHERE '" + ownerID + "' = user_index;"+
+    "SELECT * FROM Category WHERE '" + 3+ "' = type;";
+
     connection.query(sql, function(err, result, fields){
       if (err) throw err;
       else {
-    obj = {     info : [{post_id : -1}],
-          post_category : result}
+    obj = { info : [{post_id : -1}],
+          post_category : result[0],
+          user_category : result[1]
+        }
       
     res.render('shelf/setpost', obj);
       }
@@ -179,7 +161,8 @@ router.get('/post/setpost', function(req, res, next) {
 
   }else{
     sql = "SELECT *  FROM Post WHERE '" + pid + "' = post_id;"+
-    "SELECT * FROM Post_Category WHERE '" + ownerID + "' = user_index;";
+    "SELECT * FROM Post_Category WHERE '" + ownerID + "' = user_index;"+
+    "SELECT * FROM Category WHERE '" + 3+ "' = type;";
     console.log(sql);
     connection.query(sql, function(err, result, fields){
       if (err) throw err;
@@ -187,7 +170,8 @@ router.get('/post/setpost', function(req, res, next) {
      
         obj = {
           info : result[0],
-          post_category : result[1]}
+          post_category : result[1],
+          user_category : result[2]}
           
           console.log(obj);
           res.render('shelf/setpost', obj);
@@ -203,12 +187,17 @@ router.post('/post/setpost', function(req, res, next) {
 
   var pid =  req.param("pid");
   if(pid==-1){
-    connection.query("INSERT INTO Post (user_index, title,contents, post_category_id) VALUES (?,?,?,?)", [
-      ownerID, body.title, body.contents, body.user_cate
+    connection.query("INSERT INTO Post (user_index, title,contents, post_category_id, interest_category_id) VALUES (?,?,?,?,?)", [
+      ownerID, body.title, body.contents, body.post_cate, body.user_cate
     ]);
+    console.log("update");
     res.redirect('/shelf?sid='+'-1');
   }else{
-    sql = "UPDATE Post SET  post_category_id = '"+body.user_cate+"'+title = '" + body.title+"', contents = '"+ body.contents +"' WHERE '" + pid + "' = post_id;";
+    sql = "UPDATE Post SET  post_category_id = \
+    '"+body.post_cate+"'+title = '" + body.title+"'\
+     contents = '"+ body.contents +"' interest_category_id = '" + body.user_cate + "' \
+      WHERE '" + pid + "' = post_id;";
+    console.log(sql);
     connection.query(sql, function (err, result) {
       if (err) throw err;
       else{
@@ -287,13 +276,15 @@ router.get('/libManage/delete', function(req, res, next) {
 router.get('/libManage/libSet', function(req, res, next) {
   // = req.session.ownerID;
   var cname =  decodeURIComponent(req.param("cname"));
-  sql = "SELECT * FROM Bookshelf INNER JOIN Book ON Bookshelf.book_id = Book.book_id WHERE '" + cname + "' = bookshelf_title;";
+  sql = "SELECT * FROM Bookshelf INNER JOIN Book ON Bookshelf.book_id = Book.book_id WHERE '" + cname + "' = bookshelf_title;"+
+  "SELECT * FROM Book;";
       
   connection.query(sql, function(err, result, fields){
     if (err) throw err;
     else {
       obj ={
-        books : result
+        my_books : result[0],
+        books : result[1]
       };
       console.log(obj);
       res.render('shelf/library/libSet', obj);
@@ -313,7 +304,7 @@ router.post('/libManage', function(req, res, next) {
   console.log("new_name" + new_name);
 
 
-  res.redirect('/shelf/libManage');
+  
 
   sql = "DELETE FROM Bookshelf WHERE '" + ownerID + "' = user_index AND'" + cname + "' = bookshelf_title; ";
   ids.forEach(function(id) {
@@ -323,8 +314,10 @@ router.post('/libManage', function(req, res, next) {
   connection.query(sql, function(err, result, fields){
     if (err) throw err;
     else {
-      res.json(result);
+      res.redirect('/shelf/libManage');
     }
+  
+
   });
 });
 
@@ -333,7 +326,8 @@ router.get('/subscribe', function(req, res, next) {
   if(!req.session.userID) res.redirect('user/login');
   else{
     userID = req.session.userID;
-    sql = "INSERT INTO Subscribe (user_index,follower_id) VALUES ('"+ ownerID +"','"+ userID +"'); "
+    sql = "INSERT INTO Subscribe (user_index,follower_id) VALUES ('"+ ownerID +"','"+ userID +"');";
+
     connection.query(sql, function(err, result, fields){
       if (err) throw err;
       else {
